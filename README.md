@@ -14,10 +14,11 @@
 - 锁定开发依赖，补充命令行帮助和配置脱敏测试
 - 加入只读工作区检查：`pico --cwd <仓库路径> --list-files`、`--read-file` 和 `--search` 均在工作区边界内执行
 - 加入受控变更模块：文件写入和精确补丁需要 approval policy，shell 仅执行显式批准的参数数组，并硬拦截破坏性命令和 shell 解释器
+- 加入本地 session、task state、trace 和 report 存储，使用原子 JSON 写入与敏感字段脱敏
 
 ## 接下来
 
-下一次开发会开始保存会话与运行工件，让每次任务能留下可追踪的记录。
+下一次开发会开始加入有边界的 agent 执行循环。
 
 每个阶段的完成记录见 [ROADMAP.md](ROADMAP.md)。
 

@@ -22,9 +22,15 @@
 
 `run_shell` 只接收参数数组，不通过 shell 解释命令。它先拦截 shell 解释器、删除、格式化和高风险 Git 命令，再要求 approval callback 显式批准；运行时只传递必要的系统环境变量。这是本地策略边界，不替代操作系统级隔离。
 
+## 2026-08-17
+
+今天加入本地 session、task state、trace 和 report 存储。所有 session、task 和 run ID 都经过格式校验；JSON 通过临时文件和原子替换落盘，`.pico` 目录会校验仍在工作区内。
+
+trace 与 report 会遮蔽常见的 API key、token、password、cookie 和 Authorization 字段。这一阶段只提供数据工件，不包含任务恢复或模型执行循环。
+
 ## 下一次
 
-1. 保存会话、任务状态和运行工件。
+1. 加入有边界的 agent 执行循环。
 2. 继续完善会话恢复、上下文管理和评测。
 
 后续会随着每天实际完成的内容更新这份记录。
