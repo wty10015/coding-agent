@@ -28,9 +28,15 @@
 
 trace 与 report 会遮蔽常见的 API key、token、password、cookie 和 Authorization 字段。这一阶段只提供数据工件，不包含任务恢复或模型执行循环。
 
+## 2026-08-18
+
+今天加入一个独立的有界 execution loop。它把 prompt prefix、历史和当前请求限制在字符预算内，解析 `<final>` 与 `<tool>` 输出，调用注入的工具函数，并在工具步数或连续错误达到上限时停止。
+
+这一层不负责 Provider、持久化、checkpoint、恢复或长期记忆；模型和工具都通过函数注入，便于先测试控制流再接入完整 runtime。
+
 ## 下一次
 
-1. 加入有边界的 agent 执行循环。
-2. 继续完善会话恢复、上下文管理和评测。
+1. 加入 checkpoint 与失败恢复。
+2. 继续完善上下文管理和评测。
 
 后续会随着每天实际完成的内容更新这份记录。
