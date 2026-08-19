@@ -34,9 +34,15 @@ trace 与 report 会遮蔽常见的 API key、token、password、cookie 和 Auth
 
 这一层不负责 Provider、持久化、checkpoint、恢复或长期记忆；模型和工具都通过函数注入，便于先测试控制流再接入完整 runtime。
 
+## 2026-08-19
+
+今天加入独立 checkpoint 与 resume 决策。checkpoint 保存任务目标、下一步、关键文件 freshness 和工作区指纹；恢复时会区分缺失、schema 不匹配、文件过期和工作区不一致，并拒绝恢复到不属于当前任务的状态。
+
+这一阶段只提供可验证的数据层和恢复判定，不接入完整 agent runtime，也不自动执行恢复后的任务。
+
 ## 下一次
 
-1. 加入 checkpoint 与失败恢复。
+1. 加入持久化工作记忆和长期记忆。
 2. 继续完善上下文管理和评测。
 
 后续会随着每天实际完成的内容更新这份记录。

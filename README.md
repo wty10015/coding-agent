@@ -16,10 +16,11 @@
 - 加入受控变更模块：文件写入和精确补丁需要 approval policy，shell 仅执行显式批准的参数数组，并硬拦截破坏性命令和 shell 解释器
 - 加入本地 session、task state、trace 和 report 存储，使用原子 JSON 写入与敏感字段脱敏
 - 加入独立的有界 execution loop，支持上下文字符预算、工具输出解析、工具回合和停止条件测试
+- 加入 checkpoint 与 resume 决策，记录任务摘要、关键文件 freshness 和工作区指纹
 
 ## 接下来
 
-下一次开发会开始加入 checkpoint 与失败恢复。
+下一次开发会开始加入持久化工作记忆和长期记忆。
 
 每个阶段的完成记录见 [ROADMAP.md](ROADMAP.md)。
 
