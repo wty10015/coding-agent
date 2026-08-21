@@ -48,4 +48,10 @@ trace 与 report 会遮蔽常见的 API key、token、password、cookie 和 Auth
 
 下一次继续完善上下文管理和评测。
 
+## 2026-08-21
+
+今天把自动化质量检查整理成可重复执行的命令：`python scripts/check_quality.py` 会从 Git 已跟踪文件中收集测试和 Python 源文件，使用当前解释器运行 pytest 与 Ruff，并把 pytest 的临时目录固定在被忽略的 `.pytest-tmp/` 下。
+
+这样可以避开部分 Windows 环境对系统临时目录的权限差异；未提交的后续 runtime、Provider 和评测文件不会影响今天的检查结果。当前已发布测试共 51 项，今天的检查全部通过。
+
 后续会随着每天实际完成的内容更新这份记录。
