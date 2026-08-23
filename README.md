@@ -20,6 +20,7 @@
 - 加入分层记忆：工作记忆、短期过程笔记、文件摘要 freshness，以及按主题保存的长期记忆
 - 长期记忆只接受预定义主题，读取时按关键词和标签召回；写入内容会遮蔽常见凭据格式
 - 建立可复现质量检查命令，固定使用仓库内测试临时目录，避免系统临时目录权限差异
+- 加入 GitHub Actions，在 Python 3.10、3.11、3.12 上执行安装、测试、Ruff 和 CLI help smoke test
 
 ## 接下来
 
@@ -34,6 +35,8 @@ python scripts/check_quality.py
 ```
 
 命令只检查 Git 已跟踪的 Python 文件和测试，并执行 pytest 与 Ruff；测试临时文件写入被忽略的 `.pytest-tmp/`。
+
+推送到 `main` 或提交 Pull Request 后，GitHub Actions 会在 Python 3.10、3.11、3.12 上重复这些检查。
 
 每个阶段的完成记录见 [ROADMAP.md](ROADMAP.md)。
 

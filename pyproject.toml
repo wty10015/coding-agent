@@ -9,6 +9,12 @@ description = "Small local coding agent for DeepSeek, OpenAI-compatible, Anthrop
 requires-python = ">=3.10"
 dependencies = []
 
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.3.5",
+  "ruff>=0.4.4",
+]
+
 [project.scripts]
 pico = "pico.bootstrap:main"
 

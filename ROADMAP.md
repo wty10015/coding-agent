@@ -55,3 +55,9 @@ trace 与 report 会遮蔽常见的 API key、token、password、cookie 和 Auth
 这样可以避开部分 Windows 环境对系统临时目录的权限差异；未提交的后续 runtime、Provider 和评测文件不会影响今天的检查结果。当前已发布测试共 51 项，今天的检查全部通过。
 
 后续会随着每天实际完成的内容更新这份记录。
+
+## 2026-08-23
+
+今天加入 GitHub Actions 质量矩阵：每次推送 `main` 或创建 Pull Request 时，CI 会在 Python 3.10、3.11、3.12 上安装可编辑包和开发依赖，执行已发布测试、Ruff 以及 `python -m pico --help` smoke test。
+
+同时补充 pip 可识别的 `dev` extra，让本地质量命令和 CI 使用同一套开发依赖声明。今天只提交 CI 配置和依赖元数据，不带入尚未公开的 runtime、Provider 或评测模块。
