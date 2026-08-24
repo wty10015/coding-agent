@@ -26,6 +26,8 @@
 
 下一次开发会继续把记忆和上下文管理接到可验证的运行链路中。
 
+已发布模块的安装方式、架构、Provider 配置、安全边界和 `mini-pico` 教学示例见 [Alpha 指南](docs/architecture/agent-harness-v1-overview.md)。
+
 ## 质量检查
 
 在项目根目录运行：

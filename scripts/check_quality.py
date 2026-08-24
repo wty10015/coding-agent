@@ -63,6 +63,7 @@ def main() -> int:
         return 2
 
     basetemp = root / ".pytest-tmp" / "quality"
+    basetemp.parent.mkdir(parents=True, exist_ok=True)
     pytest_command = [
         sys.executable,
         "-m",

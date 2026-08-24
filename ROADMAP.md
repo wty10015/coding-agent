@@ -61,3 +61,9 @@ trace 与 report 会遮蔽常见的 API key、token、password、cookie 和 Auth
 今天加入 GitHub Actions 质量矩阵：每次推送 `main` 或创建 Pull Request 时，CI 会在 Python 3.10、3.11、3.12 上安装可编辑包和开发依赖，执行已发布测试、Ruff 以及 `python -m pico --help` smoke test。
 
 同时补充 pip 可识别的 `dev` extra，让本地质量命令和 CI 使用同一套开发依赖声明。今天只提交 CI 配置和依赖元数据，不带入尚未公开的 runtime、Provider 或评测模块。
+
+## 2026-08-24
+
+今天整理公开架构与 Alpha 指南：说明已发布模块的关系、安装和质量检查方式、四个 Provider 的配置入口、本地数据位置和安全边界；文档明确区分当前可验证能力与仍在后续开发的完整 runtime、真实模型调用和评测。
+
+同时发布独立的 `mini-pico` 教学示例。示例使用假的模型客户端演示受限工具循环、状态工件与 approval policy，不连接真实 Provider；示例自己的测试和 Ruff 检查均通过。无法确认来源与当前公开版本一致的截图没有纳入本次提交。
