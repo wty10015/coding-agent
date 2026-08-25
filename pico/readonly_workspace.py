@@ -1,7 +1,7 @@
 """Bounded, read-only inspection helpers for a local workspace."""
 
 from dataclasses import dataclass
-from pathlib import Path
+from pathlib import Path, PureWindowsPath
 
 MAX_LIST_ENTRIES = 500
 MAX_SEARCH_FILES = 1_000
@@ -37,6 +37,8 @@ class WorkspaceBoundary:
 
     def resolve(self, raw_path="."):
         candidate = Path(raw_path)
+        if not candidate.is_absolute() and PureWindowsPath(str(raw_path)).is_absolute():
+            raise WorkspaceError("path is outside the workspace")
         if not candidate.is_absolute():
             candidate = self.root / candidate
         resolved = candidate.resolve(strict=False)

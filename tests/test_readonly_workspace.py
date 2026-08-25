@@ -27,7 +27,10 @@ def test_read_file_returns_numbered_requested_lines(tmp_path):
     assert content == "   2: beta\n   3: gamma"
 
 
-@pytest.mark.parametrize("raw_path", ["../outside.txt", "C:/outside.txt"])
+@pytest.mark.parametrize(
+    "raw_path",
+    ["../outside.txt", "C:/outside.txt", r"C:\\outside.txt", r"\\server\share\outside.txt"],
+)
 def test_read_file_rejects_paths_outside_workspace(tmp_path, raw_path):
     with pytest.raises(WorkspaceError, match="outside the workspace"):
         read_file(tmp_path, raw_path)
