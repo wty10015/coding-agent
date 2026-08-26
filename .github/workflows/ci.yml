@@ -36,5 +36,8 @@ jobs:
       - name: Run tracked quality gates
         run: python scripts/check_quality.py
 
+      - name: Verify public evaluation evidence
+        run: python -m pico.public_evaluation --check --output docs/evaluation/readonly-workspace-v1.json
+
       - name: Smoke test CLI help
         run: python -m pico --help

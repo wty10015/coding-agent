@@ -47,6 +47,9 @@ docs/*
 !docs/review-pack/README.md
 !docs/architecture/
 !docs/architecture/agent-harness-v1-overview.md
+!docs/evaluation/
+!docs/evaluation/README.md
+!docs/evaluation/readonly-workspace-v1.json
 
 # OS files
 .DS_Store

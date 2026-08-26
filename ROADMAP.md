@@ -73,3 +73,9 @@ trace 与 report 会遮蔽常见的 API key、token、password、cookie 和 Auth
 今天修复了公开分层记忆模块的依赖边界。它此前复用了尚未发布的运行时辅助文件，导致干净安装后的 CI 在导入测试时失败；现在模块只保留自身实际需要的 UTC 时间和文本截断逻辑，不再依赖后续开发中的运行时文件。
 
 本次只调整已发布模块和当天记录，并补足只读检查对 Windows 绝对路径和 UNC 路径的跨平台拒绝规则；继续将 runtime、Provider 客户端与评测材料留在本地后续开发。推送后会用 Python 3.10、3.11、3.12 的 Actions 矩阵验证干净安装、测试、Ruff 和 CLI 帮助。
+
+## 2026-08-26
+
+今天加入第一组公开、可复现的评测证据。任务集使用运行时构造的合成工作区，直接验证已发布的只读工作区 API：可见文件、行范围读取、文本搜索、越界路径、Windows 绝对路径和二进制文件拒绝。报告使用固定 schema、稳定排序和相对内容，不记录机器信息、绝对路径或时间戳。
+
+这不是模型能力或完整 Agent 的基准：没有真实模型、Provider、用户仓库、凭据、成本、延迟或端到端执行数据。`python -m pico.public_evaluation --check --output docs/evaluation/readonly-workspace-v1.json` 会重新生成并逐字节核对报告；该检查也已加入 Python 3.10、3.11、3.12 的 CI 矩阵。

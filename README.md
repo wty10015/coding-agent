@@ -22,6 +22,7 @@
 - 建立可复现质量检查命令，固定使用仓库内测试临时目录，避免系统临时目录权限差异
 - 加入 GitHub Actions，在 Python 3.10、3.11、3.12 上执行安装、测试、Ruff 和 CLI help smoke test
 - 修复分层记忆模块的公开依赖边界，并让只读检查在不同平台上一致拒绝 Windows 绝对路径；干净安装环境无需未发布的运行时文件即可完成导入和测试
+- 加入可逐字节复现的只读工作区评测证据；它使用合成 fixtures，不涉及真实模型或 Provider 调用
 
 ## 接下来
 
@@ -40,6 +41,8 @@ python scripts/check_quality.py
 命令只检查 Git 已跟踪的 Python 文件和测试，并执行 pytest 与 Ruff；测试临时文件写入被忽略的 `.pytest-tmp/`。
 
 推送到 `main` 或提交 Pull Request 后，GitHub Actions 会在 Python 3.10、3.11、3.12 上重复这些检查。
+
+只读工作区 API 的合成回归证据、复现命令、数据来源和适用范围见 [公开评测证据](docs/evaluation/README.md)。
 
 每个阶段的完成记录见 [ROADMAP.md](ROADMAP.md)。
 
