@@ -79,3 +79,9 @@ trace 与 report 会遮蔽常见的 API key、token、password、cookie 和 Auth
 今天加入第一组公开、可复现的评测证据。任务集使用运行时构造的合成工作区，直接验证已发布的只读工作区 API：可见文件、行范围读取、文本搜索、越界路径、Windows 绝对路径和二进制文件拒绝。报告使用固定 schema、稳定排序和相对内容，不记录机器信息、绝对路径或时间戳。
 
 这不是模型能力或完整 Agent 的基准：没有真实模型、Provider、用户仓库、凭据、成本、延迟或端到端执行数据。`python -m pico.public_evaluation --check --output docs/evaluation/readonly-workspace-v1.json` 会重新生成并逐字节核对报告；该检查也已加入 Python 3.10、3.11、3.12 的 CI 矩阵。
+
+## 2026-08-27
+
+今天整理 v0.1.0 的候选发布材料：变更记录、发布说明、已知限制和安全反馈方式。文档只覆盖已经公开、可安装或可测试的模块，明确区分独立工具与尚未公开的集成 runtime、真实 Provider 调用和真实模型评测。
+
+`v0.1.0` tag 与 GitHub Release 尚未创建。它们必须等待本次提交推送后，在 Python 3.10、3.11、3.12 上完成安装、测试、Ruff、评测复现和 CLI help 的 CI 门禁；GitHub CLI 重新认证并确认远程 SHA 后才会执行。
