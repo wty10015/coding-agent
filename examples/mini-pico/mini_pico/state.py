@@ -22,7 +22,7 @@ class TaskState:
 
     @classmethod
     def create(cls, user_request):
-        run_id = "run_" + datetime.now(timezone.utc).strftime("%Y%m%d-%H%M%S") + "-" + uuid4().hex[:6]
+        run_id = "run_" + datetime.now().strftime("%Y%m%d-%H%M%S") + "-" + uuid4().hex[:6]
         return cls(run_id=run_id, user_request=str(user_request))
 
     def record_attempt(self):

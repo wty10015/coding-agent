@@ -1,5 +1,18 @@
-"""Coding Agent package."""
+from .cli import build_agent, build_arg_parser, build_welcome, main
+from .providers.clients import AnthropicCompatibleModelClient, FakeModelClient, OllamaModelClient, OpenAICompatibleModelClient
+from .runtime import Pico, SessionStore
+from .workspace import WorkspaceContext
 
-__version__ = "0.1.0"
-
-__all__ = ["__version__"]
+__all__ = [
+    "AnthropicCompatibleModelClient",
+    "FakeModelClient",
+    "Pico",
+    "build_agent",
+    "build_arg_parser",
+    "build_welcome",
+    "main",
+    "OllamaModelClient",
+    "OpenAICompatibleModelClient",
+    "SessionStore",
+    "WorkspaceContext",
+]

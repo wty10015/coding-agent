@@ -1,34 +1,25 @@
-"""Validated session persistence."""
+"""Session JSON persistence."""
 
-from .persistence import (
-    PersistenceError,
-    artifact_path,
-    artifact_root,
-    read_json,
-    validate_id,
-    write_json,
-)
+import json
+from pathlib import Path
 
 
 class SessionStore:
-    def __init__(self, root, workspace_root=None):
-        self.root = artifact_root(root, workspace_root)
+    def __init__(self, root):
+        self.root = Path(root)
+        self.root.mkdir(parents=True, exist_ok=True)
 
     def path(self, session_id):
-        return artifact_path(self.root, session_id)
+        return self.root / f"{session_id}.json"
 
     def save(self, session):
-        if not isinstance(session, dict) or "id" not in session:
-            raise PersistenceError("session must contain an id")
-        session_id = validate_id(session["id"], "session id")
-        return write_json(self.path(session_id), {"schema_version": 1, "session": session})
+        path = self.path(session["id"])
+        path.write_text(json.dumps(session, indent=2), encoding="utf-8")
+        return path
 
     def load(self, session_id):
-        data = read_json(self.path(session_id), required=("schema_version", "session"))
-        if data["schema_version"] != 1 or not isinstance(data["session"], dict):
-            raise PersistenceError("session schema is invalid")
-        return data["session"]
+        return json.loads(self.path(session_id).read_text(encoding="utf-8"))
 
     def latest(self):
-        files = sorted(self.root.glob("*.json"), key=lambda path: path.stat().st_mtime_ns)
+        files = sorted(self.root.glob("*.json"), key=lambda path: path.stat().st_mtime)
         return files[-1].stem if files else None

@@ -84,4 +84,8 @@ trace 与 report 会遮蔽常见的 API key、token、password、cookie 和 Auth
 
 今天整理 v0.1.0 的候选发布材料：变更记录、发布说明、已知限制和安全反馈方式。文档只覆盖已经公开、可安装或可测试的模块，明确区分独立工具与尚未公开的集成 runtime、真实 Provider 调用和真实模型评测。
 
-`v0.1.0` tag 与 GitHub Release 尚未创建。它们必须等待本次提交推送后，在 Python 3.10、3.11、3.12 上完成安装、测试、Ruff、评测复现和 CLI help 的 CI 门禁；GitHub CLI 重新认证并确认远程 SHA 后才会执行。
+`v0.1.0` tag 与 GitHub Release 已创建，保留为早期受限 Alpha 的公开记录，不会改写历史。
+
+## 2026-09-01：恢复核心运行链路
+
+我在今天把完整的 Agent runtime、CLI、Provider client、工作区工具、会话、恢复和对应测试重新接入公开主线。当前源码进入 `0.2.0a1` Alpha 开发阶段；下一次实际开发日会继续公开离线评测证据和发布材料。

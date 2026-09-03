@@ -1,5 +1,10 @@
-"""Provider configuration helpers."""
+"""Model provider adapters."""
 
-from .catalog import PROVIDER_CHOICES, ProviderConfig, resolve_provider_config
+from .clients import AnthropicCompatibleModelClient, FakeModelClient, OllamaModelClient, OpenAICompatibleModelClient
 
-__all__ = ["PROVIDER_CHOICES", "ProviderConfig", "resolve_provider_config"]
+__all__ = [
+    "AnthropicCompatibleModelClient",
+    "FakeModelClient",
+    "OllamaModelClient",
+    "OpenAICompatibleModelClient",
+]

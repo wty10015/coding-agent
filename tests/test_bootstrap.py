@@ -4,7 +4,7 @@ import sys
 
 import pytest
 
-from pico.providers import resolve_provider_config
+from pico.providers.catalog import resolve_provider_config
 
 
 def test_provider_defaults_are_available_without_credentials(monkeypatch):

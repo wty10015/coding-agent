@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pico"
-version = "0.1.0"
+version = "0.2.0a1"
 description = "Small local coding agent for DeepSeek, OpenAI-compatible, Anthropic-compatible, and Ollama models"
 requires-python = ">=3.10"
 dependencies = []
@@ -16,7 +16,7 @@ dev = [
 ]
 
 [project.scripts]
-pico = "pico.bootstrap:main"
+pico = "pico.cli:main"
 
 [dependency-groups]
 dev = [
@@ -29,3 +29,6 @@ include = ["pico*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F"]

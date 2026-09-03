@@ -6,24 +6,15 @@ session history 负责保存完整事件流；这个模块只保存更小的一�
 """
 
 import hashlib
+from datetime import datetime
 import re
-from datetime import datetime, timezone
 from pathlib import Path
+
+from ..workspace import clip, now
 
 WORKING_FILE_LIMIT = 8
 EPISODIC_NOTE_LIMIT = 12
 FILE_SUMMARY_LIMIT = 6
-
-
-def _now():
-    return datetime.now(timezone.utc).isoformat()
-
-
-def _clip(text, limit):
-    text = str(text)
-    if len(text) <= limit:
-        return text
-    return text[:limit] + f"\n...[truncated {len(text) - limit} chars]"
 
 DURABLE_TOPIC_DEFAULTS = {
     "project-conventions": {
@@ -47,22 +38,6 @@ DURABLE_TOPIC_DEFAULTS = {
         "tags": ["preference"],
     },
 }
-
-_SENSITIVE_NOTE = re.compile(
-    r"(?i)\b(api(?:[_-]|\s+)?key|access(?:[_-]|\s+)?token|auth(?:orization)?|password|secret|cookie)\b\s*[:=]\s*[^\s,;]+"
-)
-
-
-def _sanitize_note(text):
-    text = " ".join(str(text).split())
-    return _clip(_SENSITIVE_NOTE.sub(lambda match: f"{match.group(1)}=<redacted>", text), 500)
-
-
-def _validate_topic(topic):
-    topic = str(topic).strip()
-    if topic not in DURABLE_TOPIC_DEFAULTS:
-        raise ValueError(f"unsupported durable memory topic: {topic}")
-    return topic
 
 
 def default_memory_state():
@@ -139,10 +114,10 @@ class DurableMemoryStore:
             elif capture and line.startswith("- "):
                 notes.append(
                     {
-                        "text": _sanitize_note(line[2:].strip()),
+                        "text": line[2:].strip(),
                         "tags": tags,
                         "source": topic,
-                        "created_at": updated_at or _now(),
+                        "created_at": updated_at or now(),
                         "kind": "durable",
                     }
                 )
@@ -160,7 +135,7 @@ class DurableMemoryStore:
             r"^(.+?)使用.+$",
         )
         for pattern in patterns:
-            match = re.match(pattern, text, re.IGNORECASE)
+            match = re.match(pattern, text, re.I)
             if match:
                 subject = " ".join(_tokenize(match.group(1)))
                 return subject or None
@@ -202,7 +177,7 @@ class DurableMemoryStore:
             f"- topic: {topic}",
             f"- summary: {meta['summary']}",
             f"- tags: {', '.join(meta['tags'])}",
-            f"- updated_at: {_now()}",
+            f"- updated_at: {now()}",
             "",
             "## Notes",
         ]
@@ -218,10 +193,6 @@ class DurableMemoryStore:
         results = []
         superseded = []
         for topic, note_text in promotions:
-            topic = _validate_topic(topic)
-            note_text = _sanitize_note(note_text)
-            if not note_text:
-                continue
             meta = DURABLE_TOPIC_DEFAULTS[topic]
             topics.setdefault(
                 topic,
@@ -317,37 +288,37 @@ def _parse_timestamp(value):
         return 0.0
     try:
         return datetime.fromisoformat(str(value)).timestamp()
-    except (TypeError, ValueError):
+    except Exception:
         return 0.0
 
 
 def _normalize_note(note, index):
     if isinstance(note, str):
-        text = _clip(note.strip(), 500)
+        text = clip(note.strip(), 500)
         return {
             "text": text,
             "tags": [],
             "source": "",
-            "created_at": _now(),
+            "created_at": now(),
             "note_index": index,
             "kind": "episodic",
         }
 
     if not isinstance(note, dict):
-        text = _clip(str(note).strip(), 500)
+        text = clip(str(note).strip(), 500)
         return {
             "text": text,
             "tags": [],
             "source": "",
-            "created_at": _now(),
+            "created_at": now(),
             "note_index": index,
             "kind": "episodic",
         }
 
-    text = _clip(str(note.get("text", "")).strip(), 500)
+    text = clip(str(note.get("text", "")).strip(), 500)
     tags = [str(tag).strip() for tag in _ensure_list(note.get("tags", [])) if str(tag).strip()]
     source = str(note.get("source", "")).strip()
-    created_at = str(note.get("created_at", "")).strip() or _now()
+    created_at = str(note.get("created_at", "")).strip() or now()
     note_index = int(note.get("note_index", index))
     kind = str(note.get("kind", "episodic")).strip() or "episodic"
     return {
@@ -373,7 +344,7 @@ def normalize_memory_state(state, workspace_root=None):
         working = {}
     working.setdefault("task_summary", "")
     working.setdefault("recent_files", [])
-    working["task_summary"] = _clip(str(working.get("task_summary", "")).strip(), 300)
+    working["task_summary"] = clip(str(working.get("task_summary", "")).strip(), 300)
     working["recent_files"] = _dedupe_preserve_order(
         [
             canonicalize_path(path, workspace_root)
@@ -384,7 +355,7 @@ def normalize_memory_state(state, workspace_root=None):
     state["working"] = working
 
     if not str(working["task_summary"]).strip() and state.get("task"):
-        working["task_summary"] = _clip(str(state.get("task", "")).strip(), 300)
+        working["task_summary"] = clip(str(state.get("task", "")).strip(), 300)
     if not working["recent_files"] and state.get("files"):
         working["recent_files"] = _dedupe_preserve_order(
             [
@@ -421,13 +392,13 @@ def normalize_memory_state(state, workspace_root=None):
     for path, summary in file_summaries.items():
         path = canonicalize_path(path, workspace_root)
         if isinstance(summary, dict):
-            text = _clip(str(summary.get("summary", "")).strip(), 500)
-            created_at = str(summary.get("created_at", "")).strip() or _now()
+            text = clip(str(summary.get("summary", "")).strip(), 500)
+            created_at = str(summary.get("created_at", "")).strip() or now()
             freshness = summary.get("freshness")
             freshness = None if freshness in (None, "") else str(freshness).strip() or None
         else:
-            text = _clip(str(summary).strip(), 500)
-            created_at = _now()
+            text = clip(str(summary).strip(), 500)
+            created_at = now()
             freshness = None
         if not path or not text:
             continue
@@ -455,7 +426,7 @@ def normalize_memory_state(state, workspace_root=None):
 
 def set_task_summary(state, summary, workspace_root=None):
     state = normalize_memory_state(state, workspace_root)
-    state["working"]["task_summary"] = _clip(str(summary).strip(), 300)
+    state["working"]["task_summary"] = clip(str(summary).strip(), 300)
     state["task"] = state["working"]["task_summary"]
     return state
 
@@ -474,7 +445,7 @@ def remember_file(state, path, workspace_root=None):
 
 def append_note(state, text, tags=(), source="", created_at=None, workspace_root=None, kind="episodic"):
     state = normalize_memory_state(state, workspace_root)
-    text = _clip(str(text).strip(), 500)
+    text = clip(str(text).strip(), 500)
     if not text:
         return state
 
@@ -485,7 +456,7 @@ def append_note(state, text, tags=(), source="", created_at=None, workspace_root
         "text": text,
         "tags": normalized_tags,
         "source": str(source).strip(),
-        "created_at": str(created_at).strip() if created_at else _now(),
+        "created_at": str(created_at).strip() if created_at else now(),
         "note_index": int(state.get("next_note_index", 0)),
         "kind": str(kind).strip() or "episodic",
     }
@@ -499,12 +470,12 @@ def append_note(state, text, tags=(), source="", created_at=None, workspace_root
 def set_file_summary(state, path, summary, workspace_root=None):
     state = normalize_memory_state(state, workspace_root)
     path = canonicalize_path(path, workspace_root).strip()
-    summary = _clip(str(summary).strip(), 500)
+    summary = clip(str(summary).strip(), 500)
     if not path or not summary:
         return state
     state["file_summaries"][path] = {
         "summary": summary,
-        "created_at": _now(),
+        "created_at": now(),
         "freshness": file_freshness(path, workspace_root),
     }
     return state
@@ -542,7 +513,7 @@ def summarize_read_result(result, limit=180):
     if not lines:
         return "(empty)"
     summary = " | ".join(lines[:3])
-    return _clip(summary, limit)
+    return clip(summary, limit)
 
 
 def retrieval_candidates(state, query, limit=3, workspace_root=None):

@@ -21,7 +21,7 @@ class ToolExecutor:
             return ToolExecutionResult(f"error: unknown tool '{name}'", _metadata("rejected", name, read_only=False))
         try:
             tools.validate_tool(self.workspace, name, args)
-        except (KeyError, TypeError, ValueError) as exc:
+        except Exception as exc:
             return ToolExecutionResult(
                 f"error: invalid arguments for {name}: {exc}",
                 _metadata("rejected", name, error_code="invalid_arguments", read_only=not spec.risky),
@@ -46,7 +46,7 @@ class ToolExecutor:
                     affected_paths=affected_paths,
                 ),
             )
-        except (OSError, TypeError, ValueError) as exc:
+        except Exception as exc:
             return ToolExecutionResult(
                 f"error: tool {name} failed: {exc}",
                 _metadata("error", name, error_code="tool_failed", read_only=not spec.risky),

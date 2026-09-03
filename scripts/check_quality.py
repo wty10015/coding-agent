@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import subprocess
 import sys
+import tempfile
 from importlib.util import find_spec
 from pathlib import Path
 
@@ -62,20 +63,19 @@ def main() -> int:
     if not _require_module("pytest") or not _require_module("ruff"):
         return 2
 
-    basetemp = root / ".pytest-tmp" / "quality"
-    basetemp.parent.mkdir(parents=True, exist_ok=True)
-    pytest_command = [
-        sys.executable,
-        "-m",
-        "pytest",
-        "-p",
-        "no:cacheprovider",
-        "--basetemp",
-        str(basetemp),
-        *[str(path) for path in tests],
-        "-q",
-    ]
-    result = _run(root, "pytest", pytest_command)
+    with tempfile.TemporaryDirectory(prefix="pico-pytest-") as basetemp:
+        pytest_command = [
+            sys.executable,
+            "-m",
+            "pytest",
+            "-p",
+            "no:cacheprovider",
+            "--basetemp",
+            basetemp,
+            *[str(path) for path in tests],
+            "-q",
+        ]
+        result = _run(root, "pytest", pytest_command)
     if result:
         return result
 

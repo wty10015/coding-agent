@@ -120,8 +120,6 @@ def _search(workspace, args):
             cwd=workspace.root,
             capture_output=True,
             text=True,
-            encoding="utf-8",
-            errors="replace",
             check=False,
         )
         return result.stdout.strip() or "(no matches)"

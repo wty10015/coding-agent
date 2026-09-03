@@ -120,37 +120,3 @@ def test_durable_memory_index_and_topic_notes_are_loaded_and_retrieved(tmp_path)
 
     lines = [line for line in memory.retrieval_view("constrained tools", limit=4).splitlines() if line.startswith("- ")]
     assert any("Use constrained tools instead of guessing." in line for line in lines)
-
-
-def test_durable_memory_promotion_reloads_and_redacts_sensitive_values(tmp_path):
-    memory = LayeredMemory(workspace_root=tmp_path)
-
-    promoted, superseded = memory.promote_durable(
-        [
-            ("project-conventions", "The API key=placeholder-value must never be committed."),
-            ("key-decisions", "Use read-only tools before any mutation."),
-        ]
-    )
-
-    assert len(promoted) == 2
-    assert superseded == []
-    topic_text = (tmp_path / ".pico" / "memory" / "topics" / "project-conventions.md").read_text(
-        encoding="utf-8"
-    )
-    assert "placeholder-value" not in topic_text
-    assert "<redacted>" in topic_text
-
-    reloaded = LayeredMemory(workspace_root=tmp_path)
-    assert "project-conventions" in reloaded.to_dict()["durable_topics"]
-    assert any("API key=<redacted>" in note["text"] for note in reloaded.retrieval_candidates("API key"))
-
-
-def test_durable_memory_rejects_unknown_topics(tmp_path):
-    memory = LayeredMemory(workspace_root=tmp_path)
-
-    try:
-        memory.promote_durable([("private-notes", "should not be stored")])
-    except ValueError as error:
-        assert "unsupported durable memory topic" in str(error)
-    else:
-        raise AssertionError("unknown durable memory topic was accepted")

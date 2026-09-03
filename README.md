@@ -1,58 +1,40 @@
 # Coding Agent
 
-一个从零开始制作的本地 Coding Agent 项目。
+这是我持续开发的本地 Coding Agent 项目。我会在每个开发日完成一个明确的工程目标，并在当天把已经验证的工作提交到 GitHub。
 
-我会在每个开发日完成一个清晰的小目标，并在当天把这部分工作提交到 GitHub。项目会围绕代码仓库上下文、工具调用、会话状态、恢复能力和评测逐步搭建起来。
+## 当前开发状态
 
-## 发布状态
+我在 2026-09-01 接入了完整的 Agent 运行链路：命令行会构建工作区上下文、选择 Provider、运行受约束的工具循环，并把会话、运行工件与恢复状态保存在本地 `.pico/`。
 
-当前公开源码版本为 `0.1.0` Alpha 候选。`v0.1.0` tag 和 GitHub Release 会在对应提交通过 Python 3.10、3.11、3.12 的 CI 后创建；候选发布范围、已知限制和门禁见 [v0.1.0 发布说明](docs/releases/v0.1.0.md)。
+当前源码处于 `0.2.0a1` Alpha 开发阶段。已有的 `v0.1.0` tag 与 Release 保留为早期受限能力的公开记录；我会在后续实际开发日继续补齐评测证据和 v0.2 Alpha 发布材料。
 
-## 今天完成
+## 安装与运行
 
-- 创建项目仓库与 MIT 许可证
-- 整理首版 README 和开发记录
-- 建立 Python 项目的本地忽略规则
-- 加入可安装的 Python 命令行包，提供 `pico` 和 `python -m pico` 两种入口
-- 配置 DeepSeek、OpenAI 兼容、Anthropic 兼容和 Ollama 的基础参数，并提供不含凭据的环境变量模板
-- 锁定开发依赖，补充命令行帮助和配置脱敏测试
-- 加入只读工作区检查：`pico --cwd <仓库路径> --list-files`、`--read-file` 和 `--search` 均在工作区边界内执行
-- 加入受控变更模块：文件写入和精确补丁需要 approval policy，shell 仅执行显式批准的参数数组，并硬拦截破坏性命令和 shell 解释器
-- 加入本地 session、task state、trace 和 report 存储，使用原子 JSON 写入与敏感字段脱敏
-- 加入独立的有界 execution loop，支持上下文字符预算、工具输出解析、工具回合和停止条件测试
-- 加入 checkpoint 与 resume 决策，记录任务摘要、关键文件 freshness 和工作区指纹
-- 加入分层记忆：工作记忆、短期过程笔记、文件摘要 freshness，以及按主题保存的长期记忆
-- 长期记忆只接受预定义主题，读取时按关键词和标签召回；写入内容会遮蔽常见凭据格式
-- 建立可复现质量检查命令，固定使用仓库内测试临时目录，避免系统临时目录权限差异
-- 加入 GitHub Actions，在 Python 3.10、3.11、3.12 上执行安装、测试、Ruff 和 CLI help smoke test
-- 修复分层记忆模块的公开依赖边界，并让只读检查在不同平台上一致拒绝 Windows 绝对路径；干净安装环境无需未发布的运行时文件即可完成导入和测试
-- 加入可逐字节复现的只读工作区评测证据；它使用合成 fixtures，不涉及真实模型或 Provider 调用
-- 补齐 v0.1.0 候选发布的变更记录、已知限制、安全反馈方式和发布门禁
+需要 Python 3.10 或更新版本。
 
-## 接下来
+```text
+python -m pip install -e ".[dev]"
+python -m pico --help
+pico "inspect the repository and summarize the test failures"
+```
 
-下一次开发会继续把记忆和上下文管理接到可验证的运行链路中。
+Provider 配置保存在本地 `.env`；仓库只提供不含凭据的 `.env.example`。默认测试与示例使用 FakeModelClient，不会调用真实 Provider。
 
-已发布模块的安装方式、架构、Provider 配置、安全边界和 `mini-pico` 教学示例见 [Alpha 指南](docs/architecture/agent-harness-v1-overview.md)。
+## 安全与本地数据
+
+我把文件读写、补丁、shell 执行和委派都放在工作区边界与审批策略下。真实凭据、`.env`、`.pico/`、缓存、虚拟环境和运行工件都不会进入版本控制。
 
 ## 质量检查
 
-在项目根目录运行：
-
 ```text
 python scripts/check_quality.py
+python -m pico --help
 ```
 
-命令只检查 Git 已跟踪的 Python 文件和测试，并执行 pytest 与 Ruff；测试临时文件写入被忽略的 `.pytest-tmp/`。
+质量脚本只检查 Git 已跟踪的 Python 文件和测试；测试临时文件写入系统临时目录，不会进入工作区。推送到 `main` 后，GitHub Actions 会在 Python 3.10、3.11、3.12 上重复安装、测试、Ruff 和 CLI 检查。
 
-推送到 `main` 或提交 Pull Request 后，GitHub Actions 会在 Python 3.10、3.11、3.12 上重复这些检查。
+## 下一步
 
-只读工作区 API 的合成回归证据、复现命令、数据来源和适用范围见 [公开评测证据](docs/evaluation/README.md)。
+我会在下一次实际开发日公开离线可复现的 Agent 评测、截图和脱敏证据，然后准备 `v0.2.0-alpha.1`。
 
-每个阶段的完成记录见 [ROADMAP.md](ROADMAP.md)。
-
-安全问题请遵循 [SECURITY.md](SECURITY.md) 的私密反馈方式；请勿在公开 Issue、示例或日志中提交敏感信息。
-
-## 许可证
-
-本项目采用 [MIT License](LICENSE)。
+本项目采用 MIT License。

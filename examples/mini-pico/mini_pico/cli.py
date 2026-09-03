@@ -41,7 +41,7 @@ def main(argv=None):
         try:
             user_input = input("mini-pico> ").strip()
         except (EOFError, KeyboardInterrupt):
-            print()
+            print("")
             return 0
         if not user_input:
             continue
