@@ -1,30 +1,24 @@
 # 变更记录
 
-本文件记录公开仓库中可安装、可检查的变更。尚未公开的本地实验文件、运行时和资料不属于此记录。
+我按实际开发日记录公开仓库中的可安装能力、评测证据和文档变化。未公开的本地实验、运行工件和私有资料不属于本文件。
 
-## 0.1.0（候选发布说明）
+## 0.2.0-alpha.1（准备中）
 
-`v0.1.0` tag 与 GitHub Release 只会在对应提交通过 Python 3.10、3.11、3.12 的 CI 后创建；本节的存在不表示发布已完成。
+当前包版本为 `0.2.0a1`。我已经完成发布材料和离线验证，待 CI 全绿后创建 `v0.2.0-alpha.1` tag 与 GitHub Release。
 
 ### 新增
 
-- 可安装的 `pico` 包与 `python -m pico` 命令行入口。
-- DeepSeek、OpenAI 兼容、Anthropic 兼容和 Ollama 的本地配置选择与凭据脱敏展示。
-- 受工作区边界保护的只读文件列表、读取和文本搜索。
-- 应用层 approval policy 下的文件写入、精确补丁和受限 shell 参数数组工具。
-- 本地 session、task state、trace、report、checkpoint 与分层记忆模块。
-- 独立、可注入的有界控制流示例，以及 `mini-pico` 教学示例。
-- Python 3.10、3.11、3.12 的 GitHub Actions 质量矩阵。
-- 面向只读工作区 API 的合成、离线、可逐字节复现的回归评测证据。
+- 我接入了 CLI、Pico runtime、有界 Agent loop、四类 Provider client、工作区工具、approval policy、session、task state、checkpoint、resume、working memory、durable memory 和 run artifacts。
+- 我加入了固定 benchmark、fixture、离线 FakeModelClient 评测、上下文/记忆/恢复对照实验及脱敏结果归档。
+- 我补齐了 Provider 配置、安全边界、评测复现和 Alpha 使用说明。
 
-### 安全与兼容性说明
+### 兼容性与限制
 
-- 只读路径边界会拒绝工作区外、Windows 绝对路径及不允许的符号链接。
-- 受控变更与 shell 拦截属于应用层策略，不构成操作系统级沙箱。
-- 命令参数、存储格式和公开 API 仍可能在后续 Alpha 版本中调整。
+- 我保留 `v0.1.0` tag 与 Release，不改写已发布历史；该版本只代表早期 CLI、Provider 配置和只读工作区能力。
+- 工作区边界、工具白名单和 approval policy 属于应用层保护，不构成 OS 级隔离。
+- Provider 配置、命令参数、本地存储格式和 Alpha API 仍可能调整。
+- 默认测试和 CI 使用 FakeModelClient、fixture 与 mock，不读取真实凭据，也不联网调用 Provider。
 
-### 未包含
+## 0.1.0（已发布）
 
-- 集成式 Agent runtime、真实 Provider API 调用或真实模型任务执行。
-- OS 级隔离、生产级多租户安全边界或任意命令执行保证。
-- 真实模型质量、成本、延迟或端到端 Agent 成功率的基准。
+`v0.1.0` 是我保留的早期 Alpha 公开记录，提供可安装 CLI、四类 Provider 配置、只读工作区检查、独立安全与状态模块、`mini-pico` 示例和 GitHub Actions 质量矩阵。它不包含当前完整 Agent runtime，也不代表真实模型质量或端到端 Agent 成功率。
