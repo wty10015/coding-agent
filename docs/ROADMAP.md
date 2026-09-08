@@ -7,13 +7,17 @@
 - [x] `v0.1.0`：发布可安装 CLI、Provider 配置和只读工作区检查。
 - [x] `v0.2.0a1` 运行时：接入 Pico runtime、有界 Agent loop、四类 Provider、工具白名单、审批、session、任务状态、checkpoint、resume、memory 和 run artifacts。
 - [x] `v0.2.0a1` 评测：加入固定 benchmark、fixture、FakeModelClient、上下文/记忆/恢复对照实验和脱敏结果。
-- [x] `v0.2.0-alpha.1` 文档准备：补齐架构、Provider 配置、安全边界、Alpha 限制、变更记录和发布说明。
+- [x] `v0.2.0-alpha.1`：在 2026-09-05 发布 tag 与 GitHub Release，并补齐架构、Provider 配置、安全边界、变更记录和发布说明。
 
-## 发布前检查
+## 发布记录
 
-- [ ] 在 Python 3.10、3.11、3.12 的 GitHub Actions 上通过安装、测试、Ruff、CLI help 和公开评测检查。
-- [ ] 复核公开文件不包含 `.env`、真实凭据、`.pico/`、缓存、虚拟环境、临时目录或私有资料。
-- [ ] CI 全绿并完成发布前的 tag 与 Release 校验后，创建 annotated `v0.2.0-alpha.1` tag 和 GitHub Release。
+- [x] 在 Python 3.10、3.11、3.12 的 GitHub Actions 上通过安装、测试、Ruff、CLI help 和公开评测检查。
+- [x] 在 CI 通过后创建 annotated `v0.2.0-alpha.1` tag 与 GitHub Release。
+
+## 持续检查
+
+- [ ] 每次公开提交前复核暂存内容不包含 `.env`、真实凭据、`.pico/`、缓存、虚拟环境、临时目录或私有资料。
+- [ ] 后续每次推送继续检查 GitHub Actions、secret scanning 和仓库首页展示。
 
 ## 后续方向
 

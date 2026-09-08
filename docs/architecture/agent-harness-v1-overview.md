@@ -30,9 +30,9 @@ pico CLI
 
 ## 数据与安全边界
 
-我将 session、checkpoint、memory、trace 和 report 写入工作区下的 `.pico/`，并通过 secret 环境变量摘要和文本脱敏避免把凭据写入公开工件。`run_shell` 使用受控环境与审批策略，文件操作要求路径落在工作区内，`delegate` 受到深度和步数限制。
+我将 session、checkpoint、memory、trace 和 report 写入工作区下的 `.pico/`，并通过 secret 环境变量摘要和文本脱敏避免把凭据写入公开工件。主 CLI/runtime 通过 `pico.tools` 调用工具：文件操作要求目标路径落在工作区内，`run_shell` 使用过滤后的环境变量、超时和 approval policy，但仍以 `shell=True` 启动宿主 shell；`delegate` 受到深度和步数限制。
 
-这些是应用层约束，不等同于容器或操作系统级沙箱。使用真实 Provider 时，凭据必须通过本地环境变量提供，测试和 CI 不读取真实凭据。
+`pico.guarded_workspace` 中的参数数组执行和高风险命令拦截是独立模块，尚未接入上述主工具路径。这些都是应用层约束，不等同于容器或操作系统级沙箱。使用真实 Provider 时，凭据必须通过本地环境变量提供，测试和 CI 不读取真实凭据。
 
 ## 当前 Alpha 限制
 

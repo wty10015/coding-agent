@@ -18,9 +18,9 @@
 
 ## 2026-08-16
 
-今天加入受控变更模块。`write_file` 和 `patch_file` 经过 approval policy 后才会执行，并且使用原子替换写入；路径越界、最终文件或父目录中的符号链接都会被拒绝。
+今天加入独立的受控变更模块。该模块中的 `write_file` 和 `patch_file` 经过 approval policy 后才会执行，并且使用原子替换写入；路径越界、最终文件或父目录中的符号链接都会被拒绝。
 
-`run_shell` 只接收参数数组，不通过 shell 解释命令。它先拦截 shell 解释器、删除、格式化和高风险 Git 命令，再要求 approval callback 显式批准；运行时只传递必要的系统环境变量。这是本地策略边界，不替代操作系统级隔离。
+该独立模块的 `run_shell` 只接收参数数组，不通过 shell 解释命令。它先拦截 shell 解释器、删除、格式化和高风险 Git 命令，再要求 approval callback 显式批准；运行时只传递必要的系统环境变量。这是本地策略边界，不替代操作系统级隔离。它当前没有接入后续公开的主 CLI/runtime 工具路径。
 
 ## 2026-08-17
 
@@ -86,6 +86,12 @@ trace 与 report 会遮蔽常见的 API key、token、password、cookie 和 Auth
 
 `v0.1.0` tag 与 GitHub Release 已创建，保留为早期受限 Alpha 的公开记录，不会改写历史。
 
-## 2026-09-01：恢复核心运行链路
+## 2026-09-03：恢复核心运行链路
 
 我在今天把完整的 Agent runtime、CLI、Provider client、工作区工具、会话、恢复和对应测试重新接入公开主线。当前源码进入 `0.2.0a1` Alpha 开发阶段；下一次实际开发日会继续公开离线评测证据和发布材料。
+
+## 2026-09-08：修正 Alpha 发布事实与运行时边界
+
+今天我复核了公开版本：`v0.2.0-alpha.1` tag 与 GitHub Release 已在 2026-09-05 发布。主 CLI/runtime 使用 `pico.tools`，文件工具会校验工作区路径；`run_shell` 仍通过宿主 shell 执行，虽然有工具白名单、参数校验、approval policy、超时和过滤后的环境变量，但不构成操作系统级隔离。
+
+我也明确标注了 `pico.guarded_workspace` 是独立模块，其参数数组执行和高风险命令拦截不会自动覆盖主 CLI/runtime。今天只修正公开说明，不改动原始运行时实现或已发布 tag。

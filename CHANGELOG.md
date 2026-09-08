@@ -2,9 +2,9 @@
 
 我按实际开发日记录公开仓库中的可安装能力、评测证据和文档变化。未公开的本地实验、运行工件和私有资料不属于本文件。
 
-## 0.2.0-alpha.1（准备中）
+## 0.2.0-alpha.1（已发布）
 
-当前包版本为 `0.2.0a1`。我已经完成发布材料和离线验证，待 CI 全绿后创建 `v0.2.0-alpha.1` tag 与 GitHub Release。
+当前包版本为 `0.2.0a1`。我已在 2026-09-05 创建 `v0.2.0-alpha.1` tag 与 GitHub Release；本次文档修正只补齐公开事实，不改写该版本的 tag、Release 或包版本。
 
 ### 新增
 
@@ -15,7 +15,8 @@
 ### 兼容性与限制
 
 - 我保留 `v0.1.0` tag 与 Release，不改写已发布历史；该版本只代表早期 CLI、Provider 配置和只读工作区能力。
-- 工作区边界、工具白名单和 approval policy 属于应用层保护，不构成 OS 级隔离。
+- 主运行时的文件工具会校验工作区路径，高风险工具经过 approval policy；`run_shell` 仍通过宿主 shell 执行，不能视为 OS 级隔离。
+- `pico.guarded_workspace` 的参数数组执行与高风险命令拦截尚未接入主 CLI/runtime，不属于主运行时默认生效的保护。
 - Provider 配置、命令参数、本地存储格式和 Alpha API 仍可能调整。
 - 默认测试和 CI 使用 FakeModelClient、fixture 与 mock，不读取真实凭据，也不联网调用 Provider。
 
