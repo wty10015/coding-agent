@@ -53,7 +53,6 @@ import type {
   SystemAwaySummaryMessage,
   SystemBridgeStatusMessage,
   SystemCompactBoundaryMessage,
-  SystemInformationalMessage,
   SystemLocalCommandMessage,
   SystemMessage,
   SystemMicrocompactBoundaryMessage,
@@ -65,6 +64,7 @@ import type {
 import type { MessageOrigin } from '../types/messageOrigin.js'
 import type { RequestStartEvent } from '../types/requestStartEvent.js'
 import type { SystemAgentsKilledMessage } from '../types/systemAgentsKilledMessage.js'
+import type { SystemInformationalMessage } from '../types/systemInformationalMessage.js'
 import type { SystemMemorySavedMessage } from '../types/systemMemorySavedMessage.js'
 import type { SystemMessageLevel } from '../types/systemMessageLevel.js'
 import type { SystemPermissionRetryMessage } from '../types/systemPermissionRetryMessage.js'

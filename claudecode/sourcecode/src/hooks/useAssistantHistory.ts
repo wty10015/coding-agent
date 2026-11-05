@@ -16,7 +16,8 @@ import {
 import type { ScrollBoxHandle } from '../ink/components/ScrollBox.js'
 import type { RemoteSessionConfig } from '../remote/RemoteSessionManager.js'
 import { convertSDKMessage } from '../remote/sdkMessageAdapter.js'
-import type { Message, SystemInformationalMessage } from '../types/message.js'
+import type { Message } from '../types/message.js'
+import type { SystemInformationalMessage } from '../types/systemInformationalMessage.js'
 import { logForDebugging } from '../utils/debug.js'
 
 type Props = {
