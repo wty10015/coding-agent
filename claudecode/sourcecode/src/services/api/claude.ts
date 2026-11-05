@@ -46,9 +46,9 @@ import type {
   AssistantMessage,
   Message,
   StreamEvent,
-  SystemAPIErrorMessage,
   UserMessage,
 } from '../../types/message.js'
+import type { SystemAPIErrorMessage } from '../../types/systemApiErrorMessage.js'
 import {
   type CacheScope,
   logAPIPrefix,

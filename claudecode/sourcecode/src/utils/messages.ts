@@ -47,7 +47,6 @@ import type {
   NormalizedUserMessage,
   ProgressMessage,
   StreamEvent,
-  SystemAPIErrorMessage,
   SystemLocalCommandMessage,
   SystemMessage,
   SystemMicrocompactBoundaryMessage,
@@ -56,6 +55,7 @@ import type {
   UserMessage,
 } from '../types/message.js'
 import type { SystemCompactBoundaryMessage } from '../types/systemCompactBoundaryMessage.js'
+import type { SystemAPIErrorMessage } from '../types/systemApiErrorMessage.js'
 import type { SystemApiMetricsMessage } from '../types/systemApiMetricsMessage.js'
 import type { SystemAwaySummaryMessage } from '../types/systemAwaySummaryMessage.js'
 import type { SystemBridgeStatusMessage } from '../types/systemBridgeStatusMessage.js'

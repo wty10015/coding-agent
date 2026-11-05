@@ -10,9 +10,9 @@ import type {
   AssistantMessage,
   Message,
   StreamEvent,
-  SystemAPIErrorMessage,
   UserMessage,
 } from '../types/message.js'
+import type { SystemAPIErrorMessage } from '../types/systemApiErrorMessage.js'
 import { getCwd } from '../utils/cwd.js'
 import { env } from '../utils/env.js'
 import { getClaudeConfigHomeDir, isEnvTruthy } from '../utils/envUtils.js'
