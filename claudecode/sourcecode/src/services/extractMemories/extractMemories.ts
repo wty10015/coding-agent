@@ -38,9 +38,9 @@ import { REPL_TOOL_NAME } from '../../tools/REPLTool/constants.js'
 import type {
   AssistantMessage,
   Message,
-  SystemLocalCommandMessage,
   SystemMessage,
 } from '../../types/message.js'
+import type { SystemLocalCommandMessage } from '../../types/systemLocalCommandMessage.js'
 import { createAbortController } from '../../utils/abortController.js'
 import { count, uniq } from '../../utils/array.js'
 import { logForDebugging } from '../../utils/debug.js'

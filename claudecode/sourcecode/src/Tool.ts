@@ -34,10 +34,10 @@ import type {
   AttachmentMessage,
   Message,
   ProgressMessage,
-  SystemLocalCommandMessage,
   SystemMessage,
   UserMessage,
 } from './types/message.js'
+import type { SystemLocalCommandMessage } from './types/systemLocalCommandMessage.js'
 // Import permission types from centralized location to break import cycles
 // Import PermissionResult from centralized location to break import cycles
 import type {
