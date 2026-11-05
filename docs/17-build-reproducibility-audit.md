@@ -25,6 +25,8 @@
 
 我还使用临时依赖环境对恢复的 SDK 核心类型、控制类型和 usage utility 执行了 TypeScript 检查，结果通过。该检查只覆盖这些类型文件，依赖没有写入仓库，也不能证明完整项目可以安装或构建。
 
+我尝试使用临时 TypeScript 编译器对整个 `sourcecode` 目录做严格检查，并补上 `ES2022`、`preserve`、`bundler` 与 `react-jsx` 编译选项。该目录现有 `tsconfig.json` 只提供 `src/*` 路径映射；完整检查仍报告 11,635 条诊断，主要涉及缺少 Node/Bun 全局类型、未声明或无法解析的依赖、JSX runtime 解析和由此产生的隐式 `any`。这不是可复现的项目构建配置，诊断也不足以区分源码缺陷与依赖/环境缺口，因此我没有把这些结果当作补造类型或实现的依据。
+
 当前工作站原先没有 Bun 或 TypeScript 编译器。我用临时 `esbuild` 对 `sourcecode/src/entrypoints/cli.tsx` 做了 bundle 诊断：命令报告 1,649 个解析错误，首批错误包括 Bun 专用模块 `bun:bundle` 以及 `daemon/workerRegistry.js`、`daemon/main.js`、`cli/bg.js`、`cli/handlers/templateJobs.js` 和 `environment-runner/main.js` 等缺失的相对源码模块。临时诊断未写入项目目录，也不构成可复现的正式构建流程。
 
 我从 GitHub `main` 的提交 `dcbbf4b` 做了 Windows 干净克隆验收。`git ls-files package.json package-lock.json bun.lock tsconfig.json` 没有列出仓库根级构建清单；在克隆根目录运行 `npm ci` 因缺少 lock 文件失败，运行 `npm run build` 因缺少 `package.json` 失败。此前的 CLI bundle 诊断也因 Bun 专用模块和大量缺失相对模块失败。因此，安装、完整构建和核心 coding 流程仍未通过。
