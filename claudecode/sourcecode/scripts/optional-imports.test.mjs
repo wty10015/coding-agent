@@ -20,10 +20,22 @@ const cases = [
     user: 'external', enabled: false },
   { file: 'utils/attachments.ts', module: '../services/compact/snipCompact.js',
     user: 'external', enabled: true, features: ['HISTORY_SNIP'] },
+  { file: 'dialogLaunchers.tsx', module: './components/agents/SnapshotUpdateDialog.js',
+    user: 'external', enabled: false },
+  { file: 'dialogLaunchers.tsx', module: './components/agents/SnapshotUpdateDialog.js',
+    user: 'external', enabled: true, features: ['AGENT_MEMORY_SNAPSHOT'] },
+  { file: 'dialogLaunchers.tsx', module: './assistant/AssistantSessionChooser.js',
+    user: 'external', enabled: false },
+  { file: 'dialogLaunchers.tsx', module: './assistant/AssistantSessionChooser.js',
+    user: 'external', enabled: true, features: ['KAIROS'] },
+  { file: 'dialogLaunchers.tsx', module: './commands/assistant/assistant.js',
+    user: 'external', enabled: false },
+  { file: 'dialogLaunchers.tsx', module: './commands/assistant/assistant.js',
+    user: 'external', enabled: true, features: ['KAIROS'] },
 ]
 
 for (const scenario of cases) {
-  test(`${scenario.file}: ${scenario.user}, optional import ${scenario.enabled ? 'enabled' : 'disabled'}`, async () => {
+  test(`${scenario.file}: ${scenario.module}, ${scenario.user}, optional import ${scenario.enabled ? 'enabled' : 'disabled'}`, async () => {
     const resolved = []
     const marker = 'optional_import_test_marker'
     const entrypoint = fileURLToPath(new URL(`../src/${scenario.file}`, import.meta.url))
@@ -50,6 +62,12 @@ for (const scenario of cases) {
               'tools.ts': `export const TungstenTool = { name: '${marker}' }`,
               'constants/tools.ts': `export const WORKFLOW_TOOL_NAME = '${marker}'`,
               'services/compact/microCompact.ts': `export const optionalImportMarker = '${marker}'`,
+              'dialogLaunchers.tsx': `
+                export const SnapshotUpdateDialog = '${marker}';
+                export const AssistantSessionChooser = '${marker}';
+                export const NewInstallWizard = '${marker}';
+                export const computeDefaultInstallDir = () => '${marker}';
+              `,
               'utils/attachments.ts': `
                 export const isSnipRuntimeEnabled = () => true;
                 export function shouldNudgeForSnips(_messages, marker = '${marker}') {
