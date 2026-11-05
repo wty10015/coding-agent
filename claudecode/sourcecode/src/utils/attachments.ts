@@ -55,8 +55,8 @@ import { diagnosticTracker } from '../services/diagnosticTracking.js'
 import type {
   AttachmentMessage,
   Message,
-  MessageOrigin,
 } from 'src/types/message.js'
+import type { MessageOrigin } from 'src/types/messageOrigin.js'
 import {
   type QueuedCommand,
   getImagePasteIds,

@@ -42,7 +42,6 @@ import type {
   AssistantMessage,
   AttachmentMessage,
   Message,
-  MessageOrigin,
   NormalizedAssistantMessage,
   NormalizedMessage,
   NormalizedUserMessage,
@@ -71,6 +70,7 @@ import type {
   ToolUseSummaryMessage,
   UserMessage,
 } from '../types/message.js'
+import type { MessageOrigin } from '../types/messageOrigin.js'
 import { isAdvisorBlock } from './advisor.js'
 import { isAgentSwarmsEnabled } from './agentSwarmsEnabled.js'
 import { count } from './array.js'
