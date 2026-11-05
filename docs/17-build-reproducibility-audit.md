@@ -21,7 +21,7 @@
 
 我已在本机验证随附打包程序可以显示帮助和版本信息。这项检查只覆盖打包文件的启动行为，不验证 TypeScript 源码能否安装依赖、编译或运行。
 
-当前工作站原先没有 Bun 或 TypeScript 编译器。我用临时 Bun CLI 对源码入口做了两次诊断：完整 bundle 无法解析 `chalk`、`lodash-es`、MCP SDK 等包及其部分文件；将 npm 包设为 external 后，仍因上述多处缺失的相对源码模块而失败。临时诊断未写入项目目录，也不构成可复现的正式构建流程。
+当前工作站原先没有 Bun 或 TypeScript 编译器。我用临时 `esbuild` 对 `sourcecode/src/entrypoints/cli.tsx` 做了 bundle 诊断：命令报告 1,649 个解析错误，首批错误包括 Bun 专用模块 `bun:bundle` 以及 `daemon/workerRegistry.js`、`daemon/main.js`、`cli/bg.js`、`cli/handlers/templateJobs.js` 和 `environment-runner/main.js` 等缺失的相对源码模块。临时诊断未写入项目目录，也不构成可复现的正式构建流程。
 
 我从 GitHub 对当前发布分支做了浅克隆检查。克隆中只有 `sourcecode/tsconfig.json` 这一构建相关清单，没有 `package.json`、依赖锁文件、构建脚本或 CLI 文件；`types/message.ts` 和 SDK `controlTypes.ts` 也仍缺失。因此干净克隆目前无法按文档安装、构建或运行核心 coding 流程。
 
