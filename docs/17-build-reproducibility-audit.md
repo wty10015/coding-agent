@@ -13,7 +13,7 @@
 - 随附的 Bun 锁文件只有可选平台依赖，`packages` 列表为空，不能锁定源码构建所需的依赖版本。原始 ZIP 也没有包含源码级 package manifest 或 lock 文件。
 - 我已依据现有 `coreSchemas.ts` 恢复 SDK 核心类型生成器与生成文件，并让 `controlTypes.ts` 使用这些类型。随后，我依据源码调用点恢复了 `constants/querySource.ts`、`keybindings/types.ts`，以及 `types/tools.ts` 中的 Bash、PowerShell、共享 Shell、MCP、Web 搜索、任务等待、Agent 和 Skill 进度类型。Agent 与 Skill 进度类型引用的 `types/message.ts` 仍缺失；`Tool.ts` 还引用未恢复的 `REPLToolProgress` 与 `ToolProgressData`，SDK task progress 还引用未恢复的 `SdkWorkflowProgress`。
 - `utils/task/sdkProgress.ts` 会把可选的 `workflow_progress` 写入 `task_progress` 事件，`utils/sdkEventQueue.ts` 也声明了该字段；但 `entrypoints/sdk/coreSchemas.ts` 的 `SDKTaskProgressMessageSchema` 未声明它。现存源码只说明工作流进度按 `type:index` 标识并按 `phaseIndex` 分组，未提供 `SdkWorkflowProgress` 的完整字段定义，因此该类型及其 schema 校验仍待依据权威结构恢复。
-- `types/message.ts`、`entrypoints/sdk/runtimeTypes.ts`、`toolTypes.ts`、`settingsTypes.generated.ts`、`components/agents/SnapshotUpdateDialog.tsx` 和 `tools/TungstenTool/TungstenTool.tsx` 等模块也仍未恢复。
+- `entrypoints/sdk/runtimeTypes.ts` 目前只恢复了由 `utils/effort.ts` 与 `ModelInfoSchema` 共同佐证的 `EffortLevel`；该模块所需的其他 SDK runtime 类型仍未恢复。`types/message.ts`、`toolTypes.ts`、`settingsTypes.generated.ts`、`components/agents/SnapshotUpdateDialog.tsx` 和 `tools/TungstenTool/TungstenTool.tsx` 等模块也仍未恢复。
 - 我用 TypeScript AST 对当前 1,891 个 `.ts`/`.tsx` 源文件的静态 import/export 和字面量动态 import 做了相对模块盘点；按直接文件、常用源码扩展名及目录 `index` 规则尝试解析后，发现 356 处未解析引用，涉及 98 个目标路径。该扫描不覆盖路径别名、包导入或 Bun 专用解析规则，也不替代 TypeScript 编译器诊断。
 - 随附 source map 有 4,756 条 `sources`，且均带有非空 `sourcesContent`。我检查后未找到尚缺模块对应的项目源码条目；source map 中能找到仓库已有的 `src/Tool.ts`，但不能据此恢复缺失的 SDK runtime/tool 类型及 UI、工具模块。
 - 本地依赖目录含有两个内部集成依赖的源码，但公开 npm 元数据查询均返回 404；由于本地副本也没有包元数据，无法从现有证据生成可复现的安装声明。
