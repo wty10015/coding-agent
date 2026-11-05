@@ -55,8 +55,8 @@ import type {
   AttachmentMessage,
   Message,
   ProgressMessage,
-  StopHookInfo,
 } from '../../types/message.js'
+import type { StopHookInfo } from '../../types/stopHookInfo.js'
 import { count } from '../../utils/array.js'
 import { createAttachmentMessage } from '../../utils/attachments.js'
 import { logForDebugging } from '../../utils/debug.js'
