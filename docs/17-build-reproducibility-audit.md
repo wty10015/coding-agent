@@ -12,6 +12,7 @@
 - `sourcecode/node_modules` 中有 2,521 个文件，包含第三方依赖和内部集成源码；但目录中没有 `package.json` 或 npm 隐藏锁文件，不能据此确定完整依赖图和所有准确版本。
 - 随附的 Bun 锁文件只有可选平台依赖，`packages` 列表为空，不能锁定源码构建所需的依赖版本。原始 ZIP 也没有包含源码级 package manifest 或 lock 文件。
 - 源码入口引用了多处当前快照与原始 ZIP 均缺失的相对模块，包括 `sourcecode/src/types/connectorText.ts`、`sourcecode/src/entrypoints/sdk/runtimeTypes.ts`、`toolTypes.ts`、`coreTypes.generated.ts`、`components/agents/SnapshotUpdateDialog.tsx` 和 `tools/TungstenTool/TungstenTool.tsx`。我检查了随附 source map 的全部 4,756 个 source 条目，也没有找到这些项目源码文件。
+- 我对 1,884 个 TypeScript 源文件做了本地导入路径静态盘点，发现 251 个不同的本地模块路径无法解析，共涉及 598 处引用；`types/message.ts` 和 SDK `controlTypes.ts` 等缺失路径已直接核对。该扫描用于估算缺失范围，不替代 TypeScript 编译器诊断。
 - 本地依赖目录含有 `@ant/computer-use-mcp` 和 `@ant/claude-for-chrome-mcp` 的源码，但公开 npm 元数据查询返回 404；由于本地副本也没有包元数据，无法从现有证据生成可复现的安装声明。
 - 我还检索了当前仓库中依赖目录以外的归档文件、安装清单和锁文件；没有发现可供恢复的源码归档。对源码依赖目录进行忽略规则外的定向检索，也没有找到上述缺失模块。现有文件仍不足以补回缺失源码或重建准确依赖图。
 
