@@ -9,7 +9,7 @@
 - `sourcecode/src/entrypoints/cli.tsx` 是源码目录中的 CLI 入口。下列源码路径均相对于源码快照目录。
 - `sourcecode` 目录没有自己的 `package.json`。目录中的 `tsconfig.json` 只配置 `src/*` 路径映射，没有定义构建流程。
 - 源码快照目录的 `package.json` 只声明 `source-map`；这不足以描述源码所需的完整依赖。
-- `sourcecode/node_modules` 中有 2,521 个文件，包含第三方依赖和内部集成源码；但目录中没有 `package.json` 或 npm 隐藏锁文件，不能据此确定完整依赖图和所有准确版本。
+- `sourcecode/node_modules` 中有 2,521 个文件和 192 个顶层包目录，包含第三方依赖和内部集成源码；我递归检查后未找到任何 `package.json`，该目录也没有 npm 隐藏锁文件或其他安装元数据，不能据此确定完整依赖图和准确版本。
 - 随附的 Bun 锁文件只有可选平台依赖，`packages` 列表为空，不能锁定源码构建所需的依赖版本。原始 ZIP 也没有包含源码级 package manifest 或 lock 文件。
 - 源码入口引用了多处当前快照与原始 ZIP 均缺失的相对模块，包括 `sourcecode/src/types/connectorText.ts`、`sourcecode/src/entrypoints/sdk/runtimeTypes.ts`、`toolTypes.ts`、`coreTypes.generated.ts`、`components/agents/SnapshotUpdateDialog.tsx` 和 `tools/TungstenTool/TungstenTool.tsx`。我检查了随附 source map 的全部 4,756 个 source 条目，也没有找到这些项目源码文件。
 - 我对 1,884 个 TypeScript 源文件做了本地导入路径静态盘点，发现 251 个不同的本地模块路径无法解析，共涉及 598 处引用；`types/message.ts` 和 SDK `controlTypes.ts` 等缺失路径已直接核对。该扫描用于估算缺失范围，不替代 TypeScript 编译器诊断。
