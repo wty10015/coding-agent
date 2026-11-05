@@ -1,4 +1,12 @@
 import type { z } from 'zod/v4'
+import type {
+  SDKMessage,
+  SDKPostTurnSummaryMessage,
+  SDKStreamlinedTextMessage,
+  SDKStreamlinedToolUseSummaryMessage,
+  SDKUserMessage,
+} from './coreTypes.generated.js'
+export type { SDKPartialAssistantMessage } from './coreTypes.generated.js'
 import {
   JSONRPCMessagePlaceholder,
   SDKControlApplyFlagSettingsRequestSchema,
@@ -38,12 +46,9 @@ import {
   SDKHookCallbackRequestSchema,
   SDKKeepAliveMessageSchema,
   SDKUpdateEnvironmentVariablesMessageSchema,
-  StdinMessageSchema,
-  StdoutMessageSchema,
   ControlErrorResponseSchema,
   ControlResponseSchema,
 } from './controlSchemas.js'
-import { SDKPartialAssistantMessageSchema } from './coreSchemas.js'
 
 type InferSchema<Schema extends () => z.ZodType> = z.infer<
   ReturnType<Schema>
@@ -157,8 +162,18 @@ export type SDKKeepAliveMessage = InferSchema<typeof SDKKeepAliveMessageSchema>
 export type SDKUpdateEnvironmentVariablesMessage = InferSchema<
   typeof SDKUpdateEnvironmentVariablesMessageSchema
 >
-export type StdoutMessage = InferSchema<typeof StdoutMessageSchema>
-export type StdinMessage = InferSchema<typeof StdinMessageSchema>
-export type SDKPartialAssistantMessage = InferSchema<
-  typeof SDKPartialAssistantMessageSchema
->
+export type StdoutMessage =
+  | SDKMessage
+  | SDKStreamlinedTextMessage
+  | SDKStreamlinedToolUseSummaryMessage
+  | SDKPostTurnSummaryMessage
+  | SDKControlResponse
+  | SDKControlRequest
+  | SDKControlCancelRequest
+  | SDKKeepAliveMessage
+export type StdinMessage =
+  | SDKUserMessage
+  | SDKControlRequest
+  | SDKControlResponse
+  | SDKKeepAliveMessage
+  | SDKUpdateEnvironmentVariablesMessage
