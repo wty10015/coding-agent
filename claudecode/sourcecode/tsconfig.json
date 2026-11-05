@@ -2,7 +2,11 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "src/*": ["./src/*"]
+      "src/*": ["./src/*"],
+      "@ant/claude-for-chrome-mcp": ["./vendor/chrome-mcp-src/index.ts"],
+      "color-diff-napi": ["./src/native-ts/color-diff/index.ts"],
+      "image-processor-napi": ["./vendor/image-processor-src/index.ts"],
+      "modifiers-napi": ["./vendor/modifiers-napi-src/index.ts"]
     }
   }
 }

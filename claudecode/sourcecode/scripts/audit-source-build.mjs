@@ -9,6 +9,12 @@ if (args.some(arg => arg !== '--include-packages')) {
   throw new Error('Usage: bun scripts/audit-source-build.mjs [--include-packages]')
 }
 const packages = args.includes('--include-packages') ? 'bundle' : 'external'
+const localSourceAliases = new Set([
+  '@ant/claude-for-chrome-mcp',
+  'color-diff-napi',
+  'image-processor-napi',
+  'modifiers-napi',
+])
 const define = {
   // envUtils.ts and tools.ts document the external distribution build guard.
   'process.env.USER_TYPE': JSON.stringify('external'),
@@ -26,7 +32,8 @@ const result = await Bun.build({
     name: 'external-packages-keep-source-aliases',
     setup(build) {
       build.onResolve({ filter: /.*/ }, args => {
-        if (args.path === 'bun:bundle' || args.path.startsWith('src/') ||
+        if (args.path === 'bun:bundle' || localSourceAliases.has(args.path) ||
+            args.path.startsWith('src/') ||
             args.path.startsWith('.') || isAbsolute(args.path)) return
         return { path: args.path, external: true }
       })
