@@ -71,6 +71,7 @@ import type {
   UserMessage,
 } from '../types/message.js'
 import type { MessageOrigin } from '../types/messageOrigin.js'
+import type { SystemMessageLevel } from '../types/systemMessageLevel.js'
 import { isAdvisorBlock } from './advisor.js'
 import { isAgentSwarmsEnabled } from './agentSwarmsEnabled.js'
 import { count } from './array.js'
