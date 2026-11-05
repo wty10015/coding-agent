@@ -16,7 +16,9 @@ const teamMemSaved = feature('TEAMMEM') ? require('./teamMemSaved.js') as typeof
 /* eslint-enable @typescript-eslint/no-require-imports */
 import { TURN_COMPLETION_VERBS } from '../../constants/turnCompletionVerbs.js';
 import { useTerminalSize } from '../../hooks/useTerminalSize.js';
-import type { SystemMessage, SystemStopHookSummaryMessage, SystemBridgeStatusMessage, SystemTurnDurationMessage, SystemThinkingMessage } from '../../types/message.js';
+import type { SystemMessage, SystemStopHookSummaryMessage, SystemThinkingMessage } from '../../types/message.js';
+import type { SystemBridgeStatusMessage } from '../../types/systemBridgeStatusMessage.js';
+import type { SystemTurnDurationMessage } from '../../types/systemTurnDurationMessage.js';
 import type { SystemMemorySavedMessage } from '../../types/systemMemorySavedMessage.js';
 import { SystemAPIErrorMessage } from './SystemAPIErrorMessage.js';
 import { formatDuration, formatNumber, formatSecondsShort } from '../../utils/format.js';
