@@ -9,7 +9,7 @@
 - `sourcecode/src/entrypoints/cli.tsx` 是源码目录中的 CLI 入口。下列源码路径均相对于源码快照目录。
 - `sourcecode` 目录没有自己的 `package.json`。目录中的 `tsconfig.json` 只配置 `src/*` 路径映射，没有定义构建流程。
 - 源码快照目录的 `package.json` 只声明 `source-map`；这不足以描述源码所需的完整依赖。
-- `sourcecode/node_modules` 中有 2,521 个文件和 192 个顶层包目录，包含第三方依赖和内部集成源码；我递归检查后未找到任何 `package.json`，该目录也没有 npm 隐藏锁文件或其他安装元数据，不能据此确定完整依赖图和准确版本。
+- `sourcecode/node_modules` 中有 2,850 个文件和 192 个顶层包目录，包含第三方依赖和内部集成源码；我递归检查后未找到任何 `package.json`，该目录也没有 npm 隐藏锁文件或其他安装元数据，不能据此确定完整依赖图和准确版本。
 - 随附的 Bun 锁文件只有可选平台依赖，`packages` 列表为空，不能锁定源码构建所需的依赖版本。原始 ZIP 也没有包含源码级 package manifest 或 lock 文件。
 - 我已依据现有 `coreSchemas.ts` 恢复 SDK 核心类型生成器与生成文件，并让 `controlTypes.ts` 使用这些类型。随后，我依据源码调用点恢复了 `constants/querySource.ts`、`keybindings/types.ts`，以及 `types/tools.ts` 中的 Bash、PowerShell、共享 Shell、MCP、Web 搜索、任务等待、Agent、Skill 和 SDK workflow 进度类型。Agent 与 Skill 进度类型引用的 `types/message.ts` 仍缺失；`Tool.ts` 还引用未恢复的 `REPLToolProgress` 与 `ToolProgressData`。
 - 因为 `types/message.ts` 被广泛依赖且包含多个未能从现有材料完整恢复的类型，我没有用一个不完整的同名模块掩盖该缺口。我从消息队列构造点、附件转换和 `wrapCommandText` 的分支中确认了 `MessageOrigin` 的四种来源，将这项可独立证明的契约放在 `types/messageOrigin.ts`，并调整 `utils/messages.ts` 与 `utils/attachments.ts` 的类型导入。该类型文件通过独立 TypeScript strict 检查；这没有恢复其余消息类型，也没有使完整源码类型检查或构建通过。
