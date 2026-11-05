@@ -14,7 +14,7 @@
 - 源码入口引用了多处当前快照与原始 ZIP 均缺失的相对模块，包括 `sourcecode/src/types/connectorText.ts`、`sourcecode/src/entrypoints/sdk/runtimeTypes.ts`、`toolTypes.ts`、`coreTypes.generated.ts`、`components/agents/SnapshotUpdateDialog.tsx` 和 `tools/TungstenTool/TungstenTool.tsx`。我检查了随附 source map 的全部 4,756 个 source 条目，也没有找到这些项目源码文件。
 - 我对 1,884 个 TypeScript 源文件做了本地导入路径静态盘点，发现 251 个不同的本地模块路径无法解析，共涉及 598 处引用；`types/message.ts` 和 SDK `controlTypes.ts` 等缺失路径已直接核对。该扫描用于估算缺失范围，不替代 TypeScript 编译器诊断。
 - 我将这次盘点归并出的 190 个缺失目标路径与 source map 的 source 清单逐项匹配，命中数为 0；正向检查能在映射中找到仓库已有的 `src/Tool.ts`。source map 因此没有提供可恢复这些缺失文件的源码条目。
-- 本地依赖目录含有 `@ant/computer-use-mcp` 和 `@ant/claude-for-chrome-mcp` 的源码，但公开 npm 元数据查询返回 404；由于本地副本也没有包元数据，无法从现有证据生成可复现的安装声明。
+- 本地依赖目录含有两个内部集成依赖的源码，但公开 npm 元数据查询均返回 404；由于本地副本也没有包元数据，无法从现有证据生成可复现的安装声明。
 - 我还检索了当前仓库中依赖目录以外的归档文件、安装清单和锁文件；没有发现可供恢复的源码归档。对源码依赖目录进行忽略规则外的定向检索，也没有找到上述缺失模块。现有文件仍不足以补回缺失源码或重建准确依赖图。
 
 ## 验证边界
