@@ -55,7 +55,6 @@ import type {
   SystemCompactBoundaryMessage,
   SystemInformationalMessage,
   SystemLocalCommandMessage,
-  SystemMemorySavedMessage,
   SystemMessage,
   SystemMicrocompactBoundaryMessage,
   SystemStopHookSummaryMessage,
@@ -66,6 +65,7 @@ import type {
 import type { MessageOrigin } from '../types/messageOrigin.js'
 import type { RequestStartEvent } from '../types/requestStartEvent.js'
 import type { SystemAgentsKilledMessage } from '../types/systemAgentsKilledMessage.js'
+import type { SystemMemorySavedMessage } from '../types/systemMemorySavedMessage.js'
 import type { SystemMessageLevel } from '../types/systemMessageLevel.js'
 import type { SystemPermissionRetryMessage } from '../types/systemPermissionRetryMessage.js'
 import type { SystemScheduledTaskFireMessage } from '../types/systemScheduledTaskFireMessage.js'
