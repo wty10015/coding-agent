@@ -45,7 +45,6 @@ import type {
   NormalizedAssistantMessage,
   NormalizedMessage,
   NormalizedUserMessage,
-  PartialCompactDirection,
   ProgressMessage,
   StreamEvent,
   SystemAPIErrorMessage,
@@ -61,6 +60,7 @@ import type {
   UserMessage,
 } from '../types/message.js'
 import type { SystemCompactBoundaryMessage } from '../types/systemCompactBoundaryMessage.js'
+import type { PartialCompactDirection } from '../types/partialCompactDirection.js'
 import type { MessageOrigin } from '../types/messageOrigin.js'
 import type { RequestStartEvent } from '../types/requestStartEvent.js'
 import type { SystemAgentsKilledMessage } from '../types/systemAgentsKilledMessage.js'
