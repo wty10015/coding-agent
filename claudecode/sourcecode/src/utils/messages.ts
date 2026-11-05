@@ -58,7 +58,6 @@ import type {
   SystemMemorySavedMessage,
   SystemMessage,
   SystemMicrocompactBoundaryMessage,
-  SystemScheduledTaskFireMessage,
   SystemStopHookSummaryMessage,
   SystemTurnDurationMessage,
   TombstoneMessage,
@@ -69,6 +68,7 @@ import type { RequestStartEvent } from '../types/requestStartEvent.js'
 import type { SystemAgentsKilledMessage } from '../types/systemAgentsKilledMessage.js'
 import type { SystemMessageLevel } from '../types/systemMessageLevel.js'
 import type { SystemPermissionRetryMessage } from '../types/systemPermissionRetryMessage.js'
+import type { SystemScheduledTaskFireMessage } from '../types/systemScheduledTaskFireMessage.js'
 import type { StopHookInfo } from '../types/stopHookInfo.js'
 import type { ToolUseSummaryMessage } from '../types/toolUseSummaryMessage.js'
 import { isAdvisorBlock } from './advisor.js'
