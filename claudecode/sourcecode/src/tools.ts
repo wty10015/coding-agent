@@ -57,7 +57,13 @@ import { TodoWriteTool } from './tools/TodoWriteTool/TodoWriteTool.js'
 import { ExitPlanModeV2Tool } from './tools/ExitPlanModeTool/ExitPlanModeV2Tool.js'
 import { TestingPermissionTool } from './tools/testing/TestingPermissionTool.js'
 import { GrepTool } from './tools/GrepTool/GrepTool.js'
-import { TungstenTool } from './tools/TungstenTool/TungstenTool.js'
+// Match the tool's existing registration guard so external builds skip its module.
+/* eslint-disable custom-rules/no-process-env-top-level, @typescript-eslint/no-require-imports */
+const TungstenTool =
+  process.env.USER_TYPE === 'ant'
+    ? require('./tools/TungstenTool/TungstenTool.js').TungstenTool
+    : null
+/* eslint-enable custom-rules/no-process-env-top-level, @typescript-eslint/no-require-imports */
 // Lazy require to break circular dependency: tools.ts -> TeamCreateTool/TeamDeleteTool -> ... -> tools.ts
 /* eslint-disable @typescript-eslint/no-require-imports */
 const getTeamCreateTool = () =>

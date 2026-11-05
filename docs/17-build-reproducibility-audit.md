@@ -48,6 +48,12 @@ bun .\scripts\audit-source-build.mjs
 
 我从本地提交 `d845d35` 创建 Windows 干净克隆，以同一脚本和配置比较恢复前后结果：恢复前报告 16 处解析错误，补回四份资源后报告 12 处；两个结果均以退出码 1 表示未通过。剩余错误仍包含缺失的 UI、工具、压缩服务、文件持久化常量模块和 Ink 声明导入，不能把错误数量减少视为完整构建通过。我还使用 Bun 实际打包现有 `verifyContent.ts` 和恢复的提示词，确认导入后的四份字符串与资源文件逐一相等。
 
+我随后核对 `tools.ts` 与 `constants/tools.ts`，发现工具注册仅在 `USER_TYPE === 'ant'` 时使用 `TungstenTool`，递归工作流禁用规则仅在 `WORKFLOW_SCRIPTS` 开启时使用工作流名称，但原静态 import 始终要求解析对应模块。我将这两处导入改为沿用原条件的 `require`，保留原注册与禁用规则。`scripts/optional-imports.test.mjs` 在实际两个源码模块上检查四种启停组合：旧代码的两个关闭用例失败，修复后四项全部通过。测试隔离了其它依赖，并仅为启用分支提供替身导出，验证的是模块解析与打包保留边界，不验证缺失工具的功能。完整 CLI 同配置诊断仍退出 1，错误从 12 处降到 10 处。进入源码目录可复测：
+
+```powershell
+bun test .\scripts\optional-imports.test.mjs
+```
+
 恢复资源的 SHA-256 如下，路径相对于 `sourcecode`；校验值对应 UTF-8/LF 文件内容：
 
 | 资源 | SHA-256 |
