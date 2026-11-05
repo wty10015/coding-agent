@@ -2,15 +2,15 @@
 
 ## 结论
 
-我目前无法从仓库中的现有材料复现源码安装与构建。打包运行程序可启动，不等于源码构建可复现；在缺少依赖清单、锁定依赖和部分被引用源码的情况下，我不会猜测依赖版本或补写替代实现。
+我已建立源码级依赖清单与新锁文件，并在 Windows 全新克隆中以 Bun 1.4.4 完成冻结安装、CLI 打包、启动帮助和本地模型夹具的 Edit 工具闭环。这证明当前外部分发 CLI 的构建和一条受控 coding 路径可复现；它不是原始依赖锁的恢复，也不证明完整源码类型检查、真实模型服务或独立 Agent SDK 运行时已通过。下文保留各阶段发现的缺口及修复证据；阶段性失败不代表现在仍在相同位置。
 
 ## 已核对的材料
 
 - `sourcecode/src/entrypoints/cli.tsx` 是源码目录中的 CLI 入口。下列源码路径均相对于源码快照目录。
-- `sourcecode` 目录没有自己的 `package.json`。目录中的 `tsconfig.json` 只配置 `src/*` 路径映射，没有定义构建流程。
+- 初始 `sourcecode` 目录没有自己的 `package.json`。目录中的 `tsconfig.json` 只配置 `src/*` 路径映射，没有定义构建流程。
 - 源码快照目录的 `package.json` 只声明 `source-map`；这不足以描述源码所需的完整依赖。
 - `sourcecode/node_modules` 中有 2,850 个文件和 192 个顶层包目录，包含第三方依赖和内部集成源码；我递归检查后未找到任何 `package.json`，该目录也没有 npm 隐藏锁文件或其他安装元数据，不能据此确定完整依赖图和准确版本。
-- 随附的 Bun 锁文件只有可选平台依赖，`packages` 列表为空，不能锁定源码构建所需的依赖版本。原始 ZIP 也没有包含源码级 package manifest 或 lock 文件。
+- 初始随附的 Bun 锁文件只有可选平台依赖，`packages` 列表为空，不能锁定源码构建所需的依赖版本。原始 ZIP 也没有包含源码级 package manifest 或 lock 文件。
 - 我已依据现有 `coreSchemas.ts` 恢复 SDK 核心类型生成器与生成文件，并让 `controlTypes.ts` 使用这些类型。随后，我依据源码调用点恢复了 `constants/querySource.ts`、`keybindings/types.ts`，以及 `types/tools.ts` 中的 Bash、PowerShell、共享 Shell、MCP、Web 搜索、任务等待、Agent、Skill 和 SDK workflow 进度类型。Agent 与 Skill 进度类型引用的 `types/message.ts` 仍缺失；`Tool.ts` 还引用未恢复的 `REPLToolProgress` 与 `ToolProgressData`。
 - `rg` 在 `sourcecode/src` 下找到 179 个源码文件引用缺失的 `types/message.ts`。由于它包含多个未能从现有材料完整恢复的类型，我没有用一个不完整的同名模块掩盖该缺口。我从消息队列构造点、附件转换和 `wrapCommandText` 的分支中确认了 `MessageOrigin` 的四种来源，将这项可独立证明的契约放在 `types/messageOrigin.ts`，并调整 `utils/messages.ts` 与 `utils/attachments.ts` 的类型导入。该类型文件通过独立 TypeScript strict 检查；这没有恢复其余消息类型，也没有使完整源码类型检查或构建通过。
 - 我还检查了系统消息创建器：`createSystemMessage` 和 stop-hook 摘要使用 `info`、`warning`、`suggestion`，API 错误消息使用 `error`；消息 UI 对 `info` 和 `warning` 有直接分支。基于这些可见调用契约，我将 `SystemMessageLevel` 联合类型独立恢复到 `types/systemMessageLevel.ts`。`createSystemMessage` 与远程历史 sentinel 都构造 `system/informational`，字段契约一致；我据此将 `SystemInformationalMessage` 独立放在 `types/systemInformationalMessage.ts`。这些局部类型仍不等于恢复缺失的完整系统消息结构或 `types/message.ts`。
@@ -101,7 +101,7 @@ bun .\scripts\audit-source-build.mjs
 
 `scripts/optional-imports.test.mjs` 现有二十四项导入边界测试和四项映射检查。新增的 `scripts/audit-source-build.test.mjs` 使用临时源码目录执行真实诊断脚本，分别验证缺失的 `src/*` 别名必须报错、已存在的 `.ts` 文件可由 `.js` 别名解析、包解析模式能报告缺失依赖，以及未知参数必须拒绝；测试还确认没有写出构建产物。在基于 `b8cecc0` 的 Windows 隔离克隆中，仅加入两份新测试时有十三项失败，对应六个导入用例、三个映射检查和四个新增诊断契约用例。加入四份源码修复和诊断脚本改动后，连同既有十二项入口检查，44 项、280 次断言全部通过。外部分发配置下的本地运行时模块诊断返回 `success: true`、空诊断列表和退出码 0，隔离环境不含源码依赖目录，结果一致。
 
-我给诊断脚本增加 `--include-packages`，用于继续解析实际依赖包，而默认模式仍隔离本地模块图；两种模式都不写出构建产物。使用当前本机残留依赖开启包解析后，报告 18 条错误，包括包入口无法解析，以及 Zod 和模型 SDK 副本中的文件缺失。这是本次解析暴露的错误，不是完整项目仅剩十八项工作的证明。进入源码目录可复测：
+我给诊断脚本增加 `--include-packages`，用于继续解析实际依赖包，而默认模式仍隔离本地模块图；两种模式都不写出构建产物。当时使用本机残留依赖开启包解析后，报告 18 条错误，包括包入口无法解析，以及 Zod 和模型 SDK 副本中的文件缺失。这是本次解析暴露的错误，不是完整项目仅剩十八项工作的证明。进入源码目录可复测：
 
 ```powershell
 bun test .\scripts\optional-imports.test.mjs .\scripts\dialog-launchers.test.mjs .\scripts\audit-source-build.test.mjs
@@ -109,11 +109,21 @@ bun .\scripts\audit-source-build.mjs
 bun .\scripts\audit-source-build.mjs --include-packages
 ```
 
-当前通过的是默认外部构建配置的本地运行时模块解析。包解析仍退出 1，源码依赖清单和锁文件尚未恢复，完整类型检查、安装、构建与核心 coding 流程仍待验证。
+在该阶段通过的仅是默认外部构建配置的本地运行时模块解析；包解析仍退出 1，当时源码依赖清单和锁文件尚未恢复，完整类型检查、安装、构建与核心 coding 流程仍待验证。
 
 我随后检查了随附源码映射和 `sourcecode/node_modules` 中的浏览器集成模块：映射里的八个 `src/*.ts` 条目都含有源码正文，逐文件与现存副本一致。我将这八份源码恢复到 `sourcecode/vendor/chrome-mcp-src`，并在源码的 `tsconfig.json` 中把原包标识映射到该目录；已有的颜色差异、图像处理和键盘修饰键本地实现也各自接入原导入标识。默认诊断现在不会把这四个本地别名当作外部包跳过，新增测试以一个缺失的嵌套导入验证它确实遍历了 vendor 源码。45 项测试、285 次断言通过；本地模块诊断返回空错误。使用现存不完整依赖目录进行包解析时，错误数由 18 降到 17，仍不能视为完整构建。
 
 我也检查了 `protectedNamespace.js`：现存调用仅在 `USER_TYPE === 'ant'` 的内部环境分支，源码映射没有对应模块。外部构建定义会排除该分支，当前诊断未因此报错。我没有依据名称猜造内部权限判断；若将来需要内部环境构建，必须另行取得可验证的实现。
+
+## 新依赖锁与 Windows 干净克隆复测
+
+我从默认 CLI 的包导入盘点出 89 个包名，其中四个已映射到仓库现存的本地源码。对其余直接依赖，我优先采用现存源码、发布包常量和随附 bundle 能证实的版本：例如模型 SDK `0.74.0`、React `19.2.0`、OpenTelemetry API `1.9.0` / core `2.2.0`，以及 AWS 客户端 `3.936.0`。其它版本从公开包中选取、写成精确版本并重新生成 `sourcecode/bun.lock`；这是一份新的兼容性选择，不是原始锁文件。
+
+首版安装后，源码能打出 CLI，但 `--help` 因命令行解析器把 `-d2e` 判作非法短选项而失败。我将快照中的 `commander/lib/option.js` 与公开 tarball 逐字节比较，确认其对应 `commander@12.1.0`；`@commander-js/extra-typings/index.js` 同样对应 `12.1.0`。锁定这两个版本后，`--help` 正常。构建脚本依据已有外部分发定义打包，不再从未发布的内部依赖取代码；构建宏使用本项目版本及 issue 地址，未声明 npm 发布渠道。
+
+我在新的 Windows 克隆中，仅加入本批新增的源码清单、锁文件、构建脚本、入口品牌文字和夹具测试，执行 `bun install --frozen-lockfile`、`bun run build`、`bun run test:core-smoke`、`bun run test:build-boundaries` 和 `bun run check:packages`，全部通过；`--version` 输出 `0.1.0 (Coding Agent)`，`--help` 也能启动。`test:core-smoke` 在临时目录启动本机模型接口夹具，让 CLI 经两次模型回合执行 `Edit` 工具创建文件并返回文本，随后验证文件内容。Bun 安装时阻止了 `protobufjs` 的一项 postinstall；上述构建和夹具流程未依赖它，该脚本是否影响其它功能仍待检查。
+
+这些结果验证了可重建的外部分发 CLI 与一条受控工具调用路径。测试没有真实 API 凭证，未验证模型服务联通、完整 TypeScript 类型检查、所有可选功能或仍抛出未实现错误的独立 Agent SDK 导出。
 
 恢复资源的 SHA-256 如下，路径相对于 `sourcecode`；校验值对应 UTF-8/LF 文件内容：
 
@@ -134,8 +144,8 @@ bun .\scripts\audit-source-build.mjs --include-packages
 
 当前工作站原先没有 Bun 或 TypeScript 编译器。我用临时 `esbuild` 对 `sourcecode/src/entrypoints/cli.tsx` 做了 bundle 诊断：命令报告 1,649 个解析错误，首批错误包括 Bun 专用模块 `bun:bundle` 以及 `daemon/workerRegistry.js`、`daemon/main.js`、`cli/bg.js`、`cli/handlers/templateJobs.js` 和 `environment-runner/main.js` 等缺失的相对源码模块。临时诊断未写入项目目录，也不构成可复现的正式构建流程。
 
-我从当前本地提交 `a5a80bf` 在 Windows 上执行了干净克隆验收，克隆过程成功。在克隆根目录运行 `npm ci` 因缺少根级 `package-lock.json` 失败，运行 `npm run build` 因缺少 `package.json` 失败；本次验收针对本地提交，不代表 GitHub 远端已包含该提交。此前的 CLI bundle 诊断也因 Bun 专用模块和大量缺失相对模块失败。因此，安装、完整构建和核心 coding 流程仍未通过。
+我当时从本地提交 `a5a80bf` 在 Windows 上执行了干净克隆验收，克隆过程成功。在克隆根目录运行 `npm ci` 因缺少根级 `package-lock.json` 失败，运行 `npm run build` 因缺少 `package.json` 失败；本次验收针对本地提交，不代表 GitHub 远端已包含该提交。此前的 CLI bundle 诊断也因 Bun 专用模块和大量缺失相对模块失败。因此，安装、完整构建和核心 coding 流程仍未通过。
 
-目前缺少足以复现源码构建的依赖清单、精确版本锁定和多处被引用源码。用户已确认没有其他完整源码材料可供补充。我会继续以仓库现存的 schema、调用点和测试为依据，逐项重建能够由证据支撑的缺失部分，并为每项记录直接证据、推断内容和未解决字段；无法从现有证据确定的依赖版本、类型字段或实现行为会继续标记为待确认，不会以宽泛占位类型伪装成完整恢复。
+用户已确认没有其他完整源码材料可供补充。我已为外部分发 CLI 新建可安装的依赖清单与锁文件，但部分直接依赖版本是从公开发布包中选择并经当前构建与夹具测试验证，不能宣称恢复了原始精确版本。仍缺失的类型与独立 SDK 运行时会继续按现存 schema、调用点和测试逐项处理；无法证实的字段或行为不会用宽泛占位实现掩盖。
 
-重建出的实现与原始源码逐字或行为完全一致，目前无法验证。只有当源码级依赖清单和精确锁文件齐备，且从干净 Windows 克隆成功完成安装、构建及核心 coding 流程验证后，我才会将源码构建状态更新为通过。
+重建出的实现与原始源码逐字或行为完全一致，目前无法验证。当前已通过的是 Windows 干净克隆的冻结安装、CLI 构建和本地模型夹具的 Edit 流程；完整源码类型检查与真实模型服务的核心请求仍缺少通过证据，独立 Agent SDK 的运行时导出仍未实现，因此七日最终验收继续保持未完成。

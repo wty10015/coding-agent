@@ -12,6 +12,7 @@ async function audit(source, { args = [], localModule, localAlias } = {}) {
     await mkdir(join(root, 'src', 'entrypoints'), { recursive: true })
     const script = join(root, 'scripts', 'audit-source-build.mjs')
     await copyFile(new URL('./audit-source-build.mjs', import.meta.url), script)
+    await copyFile(new URL('./source-build-config.mjs', import.meta.url), join(root, 'scripts', 'source-build-config.mjs'))
     await writeFile(join(root, 'tsconfig.json'), JSON.stringify({
       compilerOptions: { baseUrl: '.', paths: {
         'src/*': ['./src/*'],

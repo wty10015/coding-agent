@@ -1,4 +1,5 @@
 **/node_modules/
+claudecode/sourcecode/dist/
 **/.DS_Store
 __MACOSX/
 **/.env

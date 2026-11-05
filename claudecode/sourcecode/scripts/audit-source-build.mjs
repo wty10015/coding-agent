@@ -1,27 +1,15 @@
 // Diagnose the existing CLI runtime graph without emitting a partial build.
 import { isAbsolute, relative } from 'node:path'
-import { fileURLToPath } from 'node:url'
+import {
+  entrypoint, externalDefine as define, localSourceAliases,
+  sourceLoader, sourceMinify, sourceRoot,
+} from './source-build-config.mjs'
 
-const sourceRoot = fileURLToPath(new URL('../', import.meta.url))
-const entrypoint = fileURLToPath(new URL('../src/entrypoints/cli.tsx', import.meta.url))
 const args = process.argv.slice(2)
 if (args.some(arg => arg !== '--include-packages')) {
   throw new Error('Usage: bun scripts/audit-source-build.mjs [--include-packages]')
 }
 const packages = args.includes('--include-packages') ? 'bundle' : 'external'
-const localSourceAliases = new Set([
-  '@ant/claude-for-chrome-mcp',
-  'color-diff-napi',
-  'image-processor-napi',
-  'modifiers-napi',
-])
-const define = {
-  // envUtils.ts and tools.ts document the external distribution build guard.
-  'process.env.USER_TYPE': JSON.stringify('external'),
-  'process.env.NODE_ENV': JSON.stringify('production'),
-  // messages.ts and ExitPlanModePermissionRequest.tsx document this external default.
-  'process.env.CLAUDE_CODE_VERIFY_PLAN': JSON.stringify('false'),
-}
 
 const result = await Bun.build({
   entrypoints: [entrypoint],
@@ -41,10 +29,10 @@ const result = await Bun.build({
   }] : [],
   write: false,
   throw: false,
-  minify: { syntax: true, whitespace: false, identifiers: false },
+  minify: sourceMinify,
   define,
   // Existing resource consumers expect Markdown and prompt files as strings.
-  loader: { '.md': 'text', '.txt': 'text' },
+  loader: sourceLoader,
 })
 
 const diagnostics = result.logs.map(log => ({
