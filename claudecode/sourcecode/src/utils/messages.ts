@@ -52,7 +52,6 @@ import type {
   SystemApiMetricsMessage,
   SystemAwaySummaryMessage,
   SystemBridgeStatusMessage,
-  SystemCompactBoundaryMessage,
   SystemLocalCommandMessage,
   SystemMessage,
   SystemMicrocompactBoundaryMessage,
@@ -61,6 +60,7 @@ import type {
   TombstoneMessage,
   UserMessage,
 } from '../types/message.js'
+import type { SystemCompactBoundaryMessage } from '../types/systemCompactBoundaryMessage.js'
 import type { MessageOrigin } from '../types/messageOrigin.js'
 import type { RequestStartEvent } from '../types/requestStartEvent.js'
 import type { SystemAgentsKilledMessage } from '../types/systemAgentsKilledMessage.js'

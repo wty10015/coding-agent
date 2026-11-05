@@ -27,10 +27,10 @@ import type {
   HookResultMessage,
   Message,
   PartialCompactDirection,
-  SystemCompactBoundaryMessage,
   SystemMessage,
   UserMessage,
 } from '../../types/message.js'
+import type { SystemCompactBoundaryMessage } from '../../types/systemCompactBoundaryMessage.js'
 import {
   createAttachmentMessage,
   generateFileAttachment,

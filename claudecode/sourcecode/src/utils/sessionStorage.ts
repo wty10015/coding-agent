@@ -58,10 +58,10 @@ import type {
   AssistantMessage,
   AttachmentMessage,
   Message,
-  SystemCompactBoundaryMessage,
   SystemMessage,
   UserMessage,
 } from '../types/message.js'
+import type { SystemCompactBoundaryMessage } from '../types/systemCompactBoundaryMessage.js'
 import type { QueueOperationMessage } from '../types/messageQueueTypes.js'
 import { uniq } from './array.js'
 import { registerCleanup } from './cleanupRegistry.js'

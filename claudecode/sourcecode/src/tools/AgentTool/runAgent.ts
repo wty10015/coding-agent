@@ -34,10 +34,10 @@ import type {
   Message,
   ProgressMessage,
   StreamEvent,
-  SystemCompactBoundaryMessage,
   TombstoneMessage,
   UserMessage,
 } from '../../types/message.js'
+import type { SystemCompactBoundaryMessage } from '../../types/systemCompactBoundaryMessage.js'
 import type { RequestStartEvent } from '../../types/requestStartEvent.js'
 import type { ToolUseSummaryMessage } from '../../types/toolUseSummaryMessage.js'
 import { createAttachmentMessage } from '../../utils/attachments.js'

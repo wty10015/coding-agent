@@ -8,6 +8,7 @@
 
 - 我已在本机验证现有打包运行程序可以显示帮助和版本信息；这只证明打包程序可启动，不代表源码构建已经恢复。
 - 我已根据现有 Zod schema 恢复 SDK 核心类型声明与控制消息类型，并用临时 TypeScript 环境完成该部分局部类型检查。随后，我依据现有调用点和 schema 补回查询来源、快捷键、Shell/MCP/Web 搜索/任务/Agent/Skill 进度类型，以及 SDK effort 与 Settings 类型导出；我还按现有 SDK 事件注释重建了最小 workflow progress 结构，并修复 schema 解析会丢弃该字段的问题，局部解析验证确认额外负载得以保留。我从本地生成声明重建了 SDK 工具输入/输出类型模块，独立 TypeScript 检查通过；近期又依据 stop-hook 的生产和消费路径恢复 `StopHookInfo`，并完成对应的 strict 类型检查。SDK 工具类型的原始 schema 和生成流程仍缺失。这些增量尚未通过完整源码类型检查，也不代表完整源码已能安装、构建或运行。
+- 我依据 compact boundary 构造器、SDK schema、转换器和持久化/UI 消费点恢复了 `CompactMetadata` 与 `SystemCompactBoundaryMessage` 两个独立类型，并完成 strict 类型检查。这项改动只覆盖能够由现存实现证明的压缩消息契约，未恢复缺失的完整消息联合类型。
 - `src/entrypoints/agentSdkTypes.ts` 中的 SDK 函数目前是类型外壳，`query`、工具创建、会话读写等导出会直接抛出未实现错误。因此，SDK 类型检查和消息解析验证不能作为 agent SDK 核心 coding 流程已可运行的证据。
 - 我记录了当前源码构建缺口及其证据，详见[源码构建可复现性审计](docs/17-build-reproducibility-audit.md)。
 - 源码的依赖清单与构建入口尚未恢复，因此我暂不提供未经验证的源码构建命令。由于目前没有其他完整源码材料，我会继续依据仓库现存的 schema、调用点和测试重建可证实的部分，并明确记录推断边界；这不等于恢复了原始完整源码。
