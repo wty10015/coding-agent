@@ -31,11 +31,11 @@ import type {
   AssistantMessage,
   AttachmentMessage,
   Message,
-  RequestStartEvent,
   StreamEvent,
   UserMessage,
   TombstoneMessage,
 } from './types/message.js'
+import type { RequestStartEvent } from './types/requestStartEvent.js'
 import type { ToolUseSummaryMessage } from './types/toolUseSummaryMessage.js'
 import { logError } from './utils/log.js'
 import {

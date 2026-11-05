@@ -10,10 +10,10 @@ import type { HookProgress } from '../types/hooks.js'
 import type {
   AssistantMessage,
   Message,
-  RequestStartEvent,
   StreamEvent,
   TombstoneMessage,
 } from '../types/message.js'
+import type { RequestStartEvent } from '../types/requestStartEvent.js'
 import type { StopHookInfo } from '../types/stopHookInfo.js'
 import type { ToolUseSummaryMessage } from '../types/toolUseSummaryMessage.js'
 import { createAttachmentMessage } from '../utils/attachments.js'

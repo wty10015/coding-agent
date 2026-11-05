@@ -47,7 +47,6 @@ import type {
   NormalizedUserMessage,
   PartialCompactDirection,
   ProgressMessage,
-  RequestStartEvent,
   StreamEvent,
   SystemAgentsKilledMessage,
   SystemAPIErrorMessage,
@@ -68,6 +67,7 @@ import type {
   UserMessage,
 } from '../types/message.js'
 import type { MessageOrigin } from '../types/messageOrigin.js'
+import type { RequestStartEvent } from '../types/requestStartEvent.js'
 import type { SystemMessageLevel } from '../types/systemMessageLevel.js'
 import type { StopHookInfo } from '../types/stopHookInfo.js'
 import type { ToolUseSummaryMessage } from '../types/toolUseSummaryMessage.js'

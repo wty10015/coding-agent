@@ -33,12 +33,12 @@ import type {
   AssistantMessage,
   Message,
   ProgressMessage,
-  RequestStartEvent,
   StreamEvent,
   SystemCompactBoundaryMessage,
   TombstoneMessage,
   UserMessage,
 } from '../../types/message.js'
+import type { RequestStartEvent } from '../../types/requestStartEvent.js'
 import type { ToolUseSummaryMessage } from '../../types/toolUseSummaryMessage.js'
 import { createAttachmentMessage } from '../../utils/attachments.js'
 import { AbortError } from '../../utils/errors.js'
