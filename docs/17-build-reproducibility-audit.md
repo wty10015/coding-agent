@@ -41,7 +41,7 @@
 
 当前工作站原先没有 Bun 或 TypeScript 编译器。我用临时 `esbuild` 对 `sourcecode/src/entrypoints/cli.tsx` 做了 bundle 诊断：命令报告 1,649 个解析错误，首批错误包括 Bun 专用模块 `bun:bundle` 以及 `daemon/workerRegistry.js`、`daemon/main.js`、`cli/bg.js`、`cli/handlers/templateJobs.js` 和 `environment-runner/main.js` 等缺失的相对源码模块。临时诊断未写入项目目录，也不构成可复现的正式构建流程。
 
-我从 GitHub `main` 的提交 `dcbbf4b` 做了 Windows 干净克隆验收。`git ls-files package.json package-lock.json bun.lock tsconfig.json` 没有列出仓库根级构建清单；在克隆根目录运行 `npm ci` 因缺少 lock 文件失败，运行 `npm run build` 因缺少 `package.json` 失败。此前的 CLI bundle 诊断也因 Bun 专用模块和大量缺失相对模块失败。因此，安装、完整构建和核心 coding 流程仍未通过。
+我从当前本地提交 `a5a80bf` 在 Windows 上执行了干净克隆验收，克隆过程成功。在克隆根目录运行 `npm ci` 因缺少根级 `package-lock.json` 失败，运行 `npm run build` 因缺少 `package.json` 失败；本次验收针对本地提交，不代表 GitHub 远端已包含该提交。此前的 CLI bundle 诊断也因 Bun 专用模块和大量缺失相对模块失败。因此，安装、完整构建和核心 coding 流程仍未通过。
 
 目前缺少足以复现源码构建的依赖清单、精确版本锁定和多处被引用源码。用户已确认没有其他完整源码材料可供补充。我会继续以仓库现存的 schema、调用点和测试为依据，逐项重建能够由证据支撑的缺失部分，并为每项记录直接证据、推断内容和未解决字段；无法从现有证据确定的依赖版本、类型字段或实现行为会继续标记为待确认，不会以宽泛占位类型伪装成完整恢复。
 
