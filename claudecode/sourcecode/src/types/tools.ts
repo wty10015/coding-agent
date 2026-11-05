@@ -1,3 +1,40 @@
+import type { TaskType } from '../Task.js'
+
+export type MCPProgress =
+  | {
+      type: 'mcp_progress'
+      status: 'started' | 'completed' | 'failed'
+      serverName: string
+      toolName: string
+      elapsedTimeMs?: number
+    }
+  | {
+      type: 'mcp_progress'
+      status: 'progress'
+      serverName: string
+      toolName: string
+      progress: number
+      total?: number
+      progressMessage?: string
+    }
+
+export type WebSearchProgress =
+  | {
+      type: 'query_update'
+      query: string
+    }
+  | {
+      type: 'search_results_received'
+      resultCount: number
+      query: string
+    }
+
+export type TaskOutputProgress = {
+  type: 'waiting_for_task'
+  taskDescription: string
+  taskType: TaskType
+}
+
 export type BashProgress = {
   type: 'bash_progress'
   output: string
