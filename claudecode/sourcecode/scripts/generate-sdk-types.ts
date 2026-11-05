@@ -153,4 +153,13 @@ const output = [
   '',
 ].join('\n')
 
-writeFileSync(outputPath, output)
+if (process.argv.includes('--check')) {
+  const currentOutput = readFileSync(outputPath, 'utf8')
+  if (currentOutput !== output) {
+    throw new Error(
+      'Generated SDK types are out of date. Run this script without --check to regenerate them.',
+    )
+  }
+} else {
+  writeFileSync(outputPath, output)
+}
