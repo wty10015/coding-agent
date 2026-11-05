@@ -60,7 +60,6 @@ import type {
   SystemLocalCommandMessage,
   SystemMemorySavedMessage,
   SystemMessage,
-  SystemMessageLevel,
   SystemMicrocompactBoundaryMessage,
   SystemPermissionRetryMessage,
   SystemScheduledTaskFireMessage,
