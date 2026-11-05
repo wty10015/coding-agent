@@ -18,8 +18,8 @@ import type {
   CollapsedReadSearchGroup,
   CollapsibleMessage,
   RenderableMessage,
-  SystemStopHookSummaryMessage,
 } from '../types/message.js'
+import type { SystemStopHookSummaryMessage } from '../types/systemStopHookSummaryMessage.js'
 import type { StopHookInfo } from '../types/stopHookInfo.js'
 import { getDisplayPath } from './file.js'
 import { isFullscreenEnvEnabled } from './fullscreen.js'
