@@ -335,9 +335,7 @@ export type SDKResultError = Omit<
 > & {
   usage: NonNullableUsage
 }
-export type SDKResultMessage = InferSchema<
-  typeof schemas.SDKResultMessageSchema
->
+export type SDKResultMessage = SDKResultSuccess | SDKResultError
 export type SDKSystemMessage = InferSchema<
   typeof schemas.SDKSystemMessageSchema
 >

@@ -122,7 +122,7 @@ const generatedTypes = schemaNames
     if (typeName === 'SDKMessage') {
       return `export type SDKMessage =\n${type}`
     }
-    if (type?.includes('\n')) {
+    if (type !== undefined) {
       return `export type ${typeName} = ${type}`
     }
     return `export type ${typeName} = InferSchema<\n  typeof schemas.${schemaName}\n>`
