@@ -1,4 +1,27 @@
 import type { TaskType } from '../Task.js'
+import type { AgentId } from './ids.js'
+import type {
+  NormalizedAssistantMessage,
+  NormalizedUserMessage,
+} from './message.js'
+
+type AgentProgressMessage =
+  | NormalizedAssistantMessage
+  | NormalizedUserMessage
+
+export type AgentToolProgress = {
+  type: 'agent_progress'
+  message: AgentProgressMessage
+  prompt: string
+  agentId: AgentId
+}
+
+export type SkillToolProgress = {
+  type: 'skill_progress'
+  message: AgentProgressMessage
+  prompt: string
+  agentId: AgentId
+}
 
 export type MCPProgress =
   | {
