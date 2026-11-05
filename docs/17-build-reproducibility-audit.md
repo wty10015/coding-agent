@@ -54,6 +54,26 @@ bun .\scripts\audit-source-build.mjs
 bun test .\scripts\optional-imports.test.mjs
 ```
 
+我依据 `ink/components/Box.tsx`、`ScrollBox.tsx`、`Text.tsx`、`Link.tsx`、`RawAnsi.tsx` 和 `ink/reconciler.ts` 的现存实现，重建了 `ink/global.d.ts` 中四种 JSX 元素的声明：`ink-box`、`ink-text`、`ink-link`、`ink-raw-ansi`。声明直接复用现有 `DOMElement`、`Styles`、`TextStyles` 和 `EventHandlerProps`，没有添加任意属性索引或宽泛占位类型；这属于依据调用契约重建，并非找回了原始声明全文。现存 React 运行时代码标注为 19.2.0，本次局部检查使用对应的 React 类型声明。
+
+`scripts/check-ink-jsx.cjs` 对该声明及 `scripts/fixtures/ink-jsx.typecheck.tsx` 进行 strict 检查，覆盖有效嵌套元素、终端事件与节点 ref，以及十个必须报错的反例。反例检查错误的布局宽度、浏览器节点 ref、事件参数、滚动状态、颜色、链接地址、ANSI 尺寸和未知属性/元素。缺少声明时，同一有效用例报告元素不存在等十项错误；补回声明后检查通过。我还从 `4f7f3df` 创建 Windows 隔离克隆，仅加入这三份文件后复测，结果一致。同一 Bun CLI 模块诊断中只消除了 `Box.tsx`、`ScrollBox.tsx` 引用该声明文件的两个错误，剩余 8 处错误，仍未通过。
+
+我将检查依赖安装到仓库外，避免把临时工具环境误作源码依赖清单。进入源码目录后，可在 PowerShell 复测：
+
+```powershell
+$inkCheckDir = Join-Path ([IO.Path]::GetTempPath()) 'coding-agent-ink-typecheck'
+npm install --prefix $inkCheckDir --ignore-scripts --no-audit --no-fund --save-exact typescript@5.9.3 @types/react@19.2.0 @types/node@22.15.30
+$previousNodePath = $env:NODE_PATH
+try {
+  $env:NODE_PATH = Join-Path $inkCheckDir 'node_modules'
+  node .\scripts\check-ink-jsx.cjs
+} finally {
+  $env:NODE_PATH = $previousNodePath
+}
+```
+
+该脚本只收集 fixture 和新声明文件的语法、语义诊断，不检查其传递依赖中所有源码实现的函数体，也不运行 UI；它不能替代完整源码类型检查、源码构建或终端交互验收。
+
 恢复资源的 SHA-256 如下，路径相对于 `sourcecode`；校验值对应 UTF-8/LF 文件内容：
 
 | 资源 | SHA-256 |
