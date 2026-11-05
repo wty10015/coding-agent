@@ -33,10 +33,10 @@ import type {
   Message,
   RequestStartEvent,
   StreamEvent,
-  ToolUseSummaryMessage,
   UserMessage,
   TombstoneMessage,
 } from './types/message.js'
+import type { ToolUseSummaryMessage } from './types/toolUseSummaryMessage.js'
 import { logError } from './utils/log.js'
 import {
   PROMPT_TOO_LONG_ERROR_MESSAGE,

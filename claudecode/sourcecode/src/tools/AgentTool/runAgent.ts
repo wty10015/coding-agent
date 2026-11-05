@@ -37,9 +37,9 @@ import type {
   StreamEvent,
   SystemCompactBoundaryMessage,
   TombstoneMessage,
-  ToolUseSummaryMessage,
   UserMessage,
 } from '../../types/message.js'
+import type { ToolUseSummaryMessage } from '../../types/toolUseSummaryMessage.js'
 import { createAttachmentMessage } from '../../utils/attachments.js'
 import { AbortError } from '../../utils/errors.js'
 import { getDisplayPath } from '../../utils/file.js'

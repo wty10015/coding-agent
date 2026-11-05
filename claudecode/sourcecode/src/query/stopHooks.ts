@@ -13,9 +13,9 @@ import type {
   RequestStartEvent,
   StreamEvent,
   TombstoneMessage,
-  ToolUseSummaryMessage,
 } from '../types/message.js'
 import type { StopHookInfo } from '../types/stopHookInfo.js'
+import type { ToolUseSummaryMessage } from '../types/toolUseSummaryMessage.js'
 import { createAttachmentMessage } from '../utils/attachments.js'
 import { logForDebugging } from '../utils/debug.js'
 import { errorMessage } from '../utils/errors.js'
