@@ -98,7 +98,12 @@ import {
 import { expandPath } from 'src/utils/path.js'
 import { extractReadFilesFromMessages } from 'src/utils/queryHelpers.js'
 import { registerHookEventHandler } from 'src/utils/hooks/hookEvents.js'
-import { executeFilePersistence } from 'src/utils/filePersistence/filePersistence.js'
+// Match the existing per-turn gate so disabled builds skip upload dependencies.
+/* eslint-disable @typescript-eslint/no-require-imports */
+const executeFilePersistence = feature('FILE_PERSISTENCE')
+  ? require('src/utils/filePersistence/filePersistence.js').executeFilePersistence
+  : null
+/* eslint-enable @typescript-eslint/no-require-imports */
 import { finalizePendingAsyncHooks } from 'src/utils/hooks/AsyncHookRegistry.js'
 import {
   gracefulShutdown,
