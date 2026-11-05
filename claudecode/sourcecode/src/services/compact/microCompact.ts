@@ -62,10 +62,13 @@ let pendingCacheEdits:
 async function getCachedMCModule(): Promise<
   typeof import('./cachedMicrocompact.js')
 > {
-  if (!cachedMCModule) {
-    cachedMCModule = await import('./cachedMicrocompact.js')
+  if (feature('CACHED_MICROCOMPACT')) {
+    if (!cachedMCModule) {
+      cachedMCModule = await import('./cachedMicrocompact.js')
+    }
+    return cachedMCModule
   }
-  return cachedMCModule
+  throw new Error('Cached microcompact is not enabled in this build')
 }
 
 function ensureCachedMCState(): import('./cachedMicrocompact.js').CachedMCState {

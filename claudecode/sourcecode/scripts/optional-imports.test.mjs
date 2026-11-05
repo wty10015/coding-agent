@@ -12,6 +12,14 @@ const cases = [
     user: 'external', enabled: false },
   { file: 'constants/tools.ts', module: '../tools/WorkflowTool/constants.js',
     user: 'external', enabled: true, features: ['WORKFLOW_SCRIPTS'] },
+  { file: 'services/compact/microCompact.ts', module: './cachedMicrocompact.js',
+    user: 'external', enabled: false },
+  { file: 'services/compact/microCompact.ts', module: './cachedMicrocompact.js',
+    user: 'external', enabled: true, features: ['CACHED_MICROCOMPACT'] },
+  { file: 'utils/attachments.ts', module: '../services/compact/snipCompact.js',
+    user: 'external', enabled: false },
+  { file: 'utils/attachments.ts', module: '../services/compact/snipCompact.js',
+    user: 'external', enabled: true, features: ['HISTORY_SNIP'] },
 ]
 
 for (const scenario of cases) {
@@ -38,9 +46,17 @@ for (const scenario of cases) {
             return { path: args.path, external: true }
           })
           build.onLoad({ filter: /.*/, namespace: 'optional-test' }, () => ({
-            contents: scenario.file === 'tools.ts'
-              ? `export const TungstenTool = { name: '${marker}' }`
-              : `export const WORKFLOW_TOOL_NAME = '${marker}'`,
+            contents: {
+              'tools.ts': `export const TungstenTool = { name: '${marker}' }`,
+              'constants/tools.ts': `export const WORKFLOW_TOOL_NAME = '${marker}'`,
+              'services/compact/microCompact.ts': `export const optionalImportMarker = '${marker}'`,
+              'utils/attachments.ts': `
+                export const isSnipRuntimeEnabled = () => true;
+                export function shouldNudgeForSnips(_messages, marker = '${marker}') {
+                  return marker.length > 0;
+                }
+              `,
+            }[scenario.file],
             loader: 'js',
           }))
         },
