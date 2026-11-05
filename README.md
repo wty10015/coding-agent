@@ -40,13 +40,11 @@ bun install --frozen-lockfile
 bun run build
 bun .\dist\cli.js --version
 bun .\dist\cli.js --help
-bun run test:build-boundaries
-bun run test:core-smoke
-bun run test:sdk-sessions
+bun run test
 bun run check:packages
 ```
 
-`test:core-smoke` 使用本机模型接口夹具验证 CLI 的 Edit 工具闭环，不发送真实模型请求。`test:sdk-sessions` 只验证会话元数据接口。`build` 目前是 CLI 打包，不包含整个源码树的 TypeScript 类型检查；真实服务与独立 SDK 的查询及工具接口仍需验收。
+`test` 一次运行源码目录中全部五个测试文件，覆盖构建边界、会话元数据和核心 Edit 工具流程。模型 API 由本机夹具模拟，不发送真实模型请求。`build` 目前是 CLI 打包，不包含整个源码树的 TypeScript 类型检查；真实服务与独立 SDK 的查询及工具接口仍需验收。
 
 ## 本地凭证
 
