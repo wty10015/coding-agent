@@ -38,14 +38,12 @@ git clone https://github.com/wty10015/coding-agent.git
 $source = (Resolve-Path .\coding-agent\*\sourcecode).Path
 cd $source
 bun install --frozen-lockfile
-bun run build
+bun run verify
 bun .\dist\cli.js --version
 bun .\dist\cli.js --help
-bun run test
-bun run check:packages
 ```
 
-`test` 一次运行源码目录中全部五个测试文件，覆盖构建边界、会话元数据和核心 Edit 工具流程。模型 API 由本机夹具模拟，不发送真实模型请求。`build` 目前是 CLI 打包，不包含整个源码树的 TypeScript 类型检查；真实服务与独立 SDK 的查询及工具接口仍需验收。
+`verify` 依次构建 CLI、运行源码目录中的五个测试文件并检查包模块解析，避免核心夹具因尚未生成 `dist/cli.js` 而失败。测试覆盖构建边界、会话元数据和核心 Edit 工具流程；模型 API 由本机夹具模拟，不发送真实模型请求。构建不包含整个源码树的 TypeScript 类型检查；真实服务与独立 SDK 的查询及工具接口仍需验收。单独运行 `bun run test` 时，请先执行 `bun run build`。
 
 ## 本地凭证
 

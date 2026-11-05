@@ -9,6 +9,7 @@
     "check:modules": "bun scripts/audit-source-build.mjs",
     "check:packages": "bun scripts/audit-source-build.mjs --include-packages",
     "test": "bun test scripts",
+    "verify": "bun run build && bun test scripts && bun run check:packages",
     "test:core-smoke": "bun test scripts/core-cli-smoke.test.mjs",
     "test:sdk-sessions": "bun test scripts/sdk-session-list.test.mjs",
     "test:build-boundaries": "bun test scripts/optional-imports.test.mjs scripts/dialog-launchers.test.mjs scripts/audit-source-build.test.mjs"
