@@ -48,7 +48,6 @@ import type {
   PartialCompactDirection,
   ProgressMessage,
   StreamEvent,
-  SystemAgentsKilledMessage,
   SystemAPIErrorMessage,
   SystemApiMetricsMessage,
   SystemAwaySummaryMessage,
@@ -68,6 +67,7 @@ import type {
 } from '../types/message.js'
 import type { MessageOrigin } from '../types/messageOrigin.js'
 import type { RequestStartEvent } from '../types/requestStartEvent.js'
+import type { SystemAgentsKilledMessage } from '../types/systemAgentsKilledMessage.js'
 import type { SystemMessageLevel } from '../types/systemMessageLevel.js'
 import type { StopHookInfo } from '../types/stopHookInfo.js'
 import type { ToolUseSummaryMessage } from '../types/toolUseSummaryMessage.js'
