@@ -11,9 +11,9 @@
 - 源码快照目录的 `package.json` 只声明 `source-map`；这不足以描述源码所需的完整依赖。
 - `sourcecode/node_modules` 中有 2,521 个文件和 192 个顶层包目录，包含第三方依赖和内部集成源码；我递归检查后未找到任何 `package.json`，该目录也没有 npm 隐藏锁文件或其他安装元数据，不能据此确定完整依赖图和准确版本。
 - 随附的 Bun 锁文件只有可选平台依赖，`packages` 列表为空，不能锁定源码构建所需的依赖版本。原始 ZIP 也没有包含源码级 package manifest 或 lock 文件。
-- 源码入口引用了多处当前快照与原始 ZIP 均缺失的相对模块，包括 `sourcecode/src/types/connectorText.ts`、`sourcecode/src/entrypoints/sdk/runtimeTypes.ts`、`toolTypes.ts`、`coreTypes.generated.ts`、`components/agents/SnapshotUpdateDialog.tsx` 和 `tools/TungstenTool/TungstenTool.tsx`。我检查了随附 source map 的全部 4,756 个 source 条目，也没有找到这些项目源码文件。
-- 我对 1,884 个 TypeScript 源文件做了本地导入路径静态盘点，发现 251 个不同的本地模块路径无法解析，共涉及 598 处引用；`types/message.ts` 和 SDK `controlTypes.ts` 等缺失路径已直接核对。该扫描用于估算缺失范围，不替代 TypeScript 编译器诊断。
-- 我解析了随附 source map：4,756 条 `sources` 都有对应的非空 `sourcesContent`。将这次盘点归并出的 190 个缺失目标路径与 source 清单逐项匹配，命中数仍为 0；`types/message.ts`、SDK 类型文件及相关 UI/工具模块等代表性缺失路径也没有对应源码条目。正向检查能在映射中找到仓库已有的 `src/Tool.ts`。因此，这份 source map 虽包含嵌入源码内容，但没有提供可恢复上述缺失文件的条目。
+- 我已依据现有 `coreSchemas.ts` 恢复 SDK 核心类型生成器与生成文件，并让 `controlTypes.ts` 使用这些类型。当前仍缺少 `sourcecode/src/types/connectorText.ts`、`sourcecode/src/entrypoints/sdk/runtimeTypes.ts`、`toolTypes.ts`、`settingsTypes.generated.ts`、`components/agents/SnapshotUpdateDialog.tsx` 和 `tools/TungstenTool/TungstenTool.tsx` 等相对模块；这些缺失阻止完整源码构建。
+- 我对当前 1,888 个 TypeScript 源文件做了相对导入静态盘点，发现 362 处无法按 `.ts`、`.tsx`、`.js`、`.jsx`、`.json` 和目录 `index` 文件规则解析的引用，涉及 73 个不同目标路径。该扫描不覆盖路径别名、包导入或 Bun 专用解析规则，也不替代 TypeScript 编译器诊断。
+- 随附 source map 有 4,756 条 `sources`，且均带有非空 `sourcesContent`。我此前逐项检查时，缺失目标没有对应的项目源码条目；source map 中能找到仓库已有的 `src/Tool.ts`，但不能据此恢复缺失的 SDK runtime/tool 类型及 UI、工具模块。
 - 本地依赖目录含有两个内部集成依赖的源码，但公开 npm 元数据查询均返回 404；由于本地副本也没有包元数据，无法从现有证据生成可复现的安装声明。
 - 我还检索了当前仓库中依赖目录以外的归档文件、安装清单和锁文件；没有发现可供恢复的源码归档。对源码依赖目录进行忽略规则外的定向检索，也没有找到上述缺失模块。现有文件仍不足以补回缺失源码或重建准确依赖图。
 
@@ -21,8 +21,10 @@
 
 我已在本机验证随附打包程序可以显示帮助和版本信息。这项检查只覆盖打包文件的启动行为，不验证 TypeScript 源码能否安装依赖、编译或运行。
 
+我还使用临时依赖环境对恢复的 SDK 核心类型、控制类型和 usage utility 执行了 TypeScript 检查，结果通过。该检查只覆盖这些类型文件，依赖没有写入仓库，也不能证明完整项目可以安装或构建。
+
 当前工作站原先没有 Bun 或 TypeScript 编译器。我用临时 `esbuild` 对 `sourcecode/src/entrypoints/cli.tsx` 做了 bundle 诊断：命令报告 1,649 个解析错误，首批错误包括 Bun 专用模块 `bun:bundle` 以及 `daemon/workerRegistry.js`、`daemon/main.js`、`cli/bg.js`、`cli/handlers/templateJobs.js` 和 `environment-runner/main.js` 等缺失的相对源码模块。临时诊断未写入项目目录，也不构成可复现的正式构建流程。
 
-我从 GitHub 当前 `main` 做了新的 Windows 浅克隆，检出提交为 `73cd124`。源码目录中没有 `package.json`、任何锁文件、构建脚本或 CLI 文件；`types/message.ts` 和 SDK `controlTypes.ts` 等源码也仍缺失。在该目录运行 `npm install --package-lock=false --ignore-scripts` 虽返回成功，但 npm 没有项目清单可读取，因此没有安装项目依赖；在仓库内运行 `npm ci` 因缺少锁文件失败，`npm run` 因缺少 `package.json` 失败。对这份干净克隆的 CLI 入口运行 bundle 诊断，esbuild 报告 2,065 个解析错误，其中包括 `bun:bundle` 和多个缺失的相对源码模块。因此干净克隆目前无法安装项目依赖、构建或运行核心 coding 流程。
+我此前从 GitHub `main` 做过 Windows 干净克隆验收：该检出没有源码级 `package.json`、锁文件或构建脚本，`npm ci` 与 `npm run` 无法执行，CLI bundle 诊断也因 Bun 专用模块和大量缺失相对模块失败。此后我在本地恢复了部分 SDK 类型，但提交尚未推送，且这些类型恢复没有补足源码依赖清单或其他缺失模块；因此干净克隆的安装、完整构建和核心 coding 流程仍未通过。
 
 目前缺少足以复现源码构建的依赖清单、精确版本锁定和多处被引用源码。获得这些原始材料后，我会从干净克隆开始记录安装、构建和核心验证步骤；在此之前，源码构建状态保持未通过。
