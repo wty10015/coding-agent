@@ -1,5 +1,5 @@
 /**
- * Main entrypoint for Claude Code Agent SDK types.
+ * Main entrypoint for Coding Agent SDK types and runtime exports.
  *
  * This file re-exports the public SDK API from:
  * - sdk/coreTypes.ts - Common serializable types (messages, configs)
@@ -13,6 +13,8 @@ import type {
   CallToolResult,
   ToolAnnotations,
 } from '@modelcontextprotocol/sdk/types.js'
+import { getSessionInfoImpl } from '../utils/getSessionInfoImpl.js'
+import { listSessionsImpl } from '../utils/listSessionsImpl.js'
 
 // Control protocol types for SDK builders (bridge subpath consumers)
 /** @alpha */
@@ -202,9 +204,9 @@ export async function getSessionMessages(
  * ```
  */
 export async function listSessions(
-  _options?: ListSessionsOptions,
+  options?: ListSessionsOptions,
 ): Promise<SDKSessionInfo[]> {
-  throw new Error('listSessions is not implemented in the SDK')
+  return listSessionsImpl(options)
 }
 
 /**
@@ -217,10 +219,10 @@ export async function listSessions(
  * @param options - `{ dir?: string }` project path; omit to search all project directories
  */
 export async function getSessionInfo(
-  _sessionId: string,
-  _options?: GetSessionInfoOptions,
+  sessionId: string,
+  options?: GetSessionInfoOptions,
 ): Promise<SDKSessionInfo | undefined> {
-  throw new Error('getSessionInfo is not implemented in the SDK')
+  return getSessionInfoImpl(sessionId, options)
 }
 
 /**
