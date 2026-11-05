@@ -33,11 +33,31 @@
 - `types/tools.ts` 还引用缺失的 `REPLToolProgress` 和 `ToolProgressData`。我检查了 `REPLTool` 目录、所有 Git 对象及本地 bundle source map：目录只保留 `constants.ts` 和 `primitiveTools.ts`，source map 也只有这两个 REPL 源文件，没有 `REPLTool.ts` 或这些类型的原始定义；Git 对象库中也没有可恢复的旧版本。由于现有调用点不能证明缺失 payload 的完整形状，我不会用宽泛占位类型补齐。
 - 我用 TypeScript AST 对当前 1,891 个 `.ts`/`.tsx` 源文件的静态 import/export 和字面量动态 import 做了相对模块盘点；按直接文件、常用源码扩展名及目录 `index` 规则尝试解析后，发现 356 处未解析引用，涉及 98 个目标路径。该扫描不覆盖路径别名、包导入或 Bun 专用解析规则，也不替代 TypeScript 编译器诊断。
 - 随附 source map 有 4,756 条 `sources`，且均带有非空 `sourcesContent`。我检查后未找到尚缺模块对应的项目源码条目；source map 中能找到仓库已有的 `src/Tool.ts`，但不能据此恢复缺失的 SDK runtime/tool 类型及 UI、工具模块。
+- 我进一步沿 source map 定位 `skills/bundled/verifyContent.ts` 的导出赋值，确认 bundle 中的 `K85`、`s65` 和 `e65` 分别保存 skill 正文及两个示例的静态字符串；`commands/ultraplan.tsx` 的 `_rawPrompt` 映射到 `Q57 = qCK()`，对应模块把提示词字面量赋给 `QGY.exports`。这些资源没有独立的 source map 条目，但字符串仍在 bundle 中。我用 TypeScript AST 静态读取字面量，未执行 bundle，将它们补回原导入路径。verify 的三份 Markdown 逐字恢复；ultraplan 提示词仅将一句上游产品称呼替换为通用的远程编程工作区表述，未重写其余指令。源码目录的 `.gitattributes` 将这四份资源固定为 LF，避免 Windows 克隆改变提示词换行。
 - 本地依赖目录含有两个内部集成依赖的源码，但公开 npm 元数据查询均返回 404；由于本地副本也没有包元数据，无法从现有证据生成可复现的安装声明。
 - 我检查了本机 npm 缓存：737 条缓存索引中只有 294 个包名对应缓存 tarball；这些名字与 `sourcecode/node_modules` 的 316 个顶层包目录仅有 51 个重合。缓存来源还可能属于其他项目，无法证明缓存包版本与当前安装目录一致，也没有覆盖其余依赖，因此不能据此生成可信的源码锁文件。
 - 我还检索了当前仓库中依赖目录以外的归档文件、安装清单和锁文件；没有发现可供恢复的源码归档。对源码依赖目录进行忽略规则外的定向检索，也没有找到上述缺失模块。现有文件仍不足以补回缺失源码或重建准确依赖图。
 
 ## 验证边界
+
+我用仓库外临时安装的 Bun 1.4.4 重新检查了完整 CLI 入口。源码注释要求 `feature()` 在构建时排除未启用功能，并将 `process.env.USER_TYPE` 固定为 `external`；Ink 的 devtools 导入还按 `NODE_ENV` 排除。我将这些已有构建约定写入 `sourcecode/scripts/audit-source-build.mjs`，使用 Markdown/文本 loader，且不写出不完整产物。该脚本保留外部包导入，诊断范围仅为本地运行时模块解析；它不验证依赖安装、完整打包、TypeScript 类型或运行时行为。安装 Bun 1.4.4 后，进入源码目录执行：
+
+```powershell
+bun .\scripts\audit-source-build.mjs
+```
+
+我从本地提交 `d845d35` 创建 Windows 干净克隆，以同一脚本和配置比较恢复前后结果：恢复前报告 16 处解析错误，补回四份资源后报告 12 处；两个结果均以退出码 1 表示未通过。剩余错误仍包含缺失的 UI、工具、压缩服务、文件持久化常量模块和 Ink 声明导入，不能把错误数量减少视为完整构建通过。我还使用 Bun 实际打包现有 `verifyContent.ts` 和恢复的提示词，确认导入后的四份字符串与资源文件逐一相等。
+
+恢复资源的 SHA-256 如下，路径相对于 `sourcecode`；校验值对应 UTF-8/LF 文件内容：
+
+| 资源 | SHA-256 |
+| --- | --- |
+| `src/skills/bundled/verify/SKILL.md` | `a9995acc78b27b807aef7b70f03846051450aeba2bd397102c6198b08b5aea0d` |
+| `src/skills/bundled/verify/examples/cli.md` | `92c3784a19bf09094ffe311f62c84d960fec6c4273c22d2cb5e5a8023f281031` |
+| `src/skills/bundled/verify/examples/server.md` | `cae669e4a86d3d1352e976f457d7330aed96afd5337d61e0d062f38cccf31c1a` |
+| `src/utils/ultraplan/prompt.txt` | `3dec12ed05fc9f445ea02bed56c3534241d086b7382ae79aca11fb7e0fa9c39f` |
+
+提取时使用的随附 `cli.js` SHA-256 为 `75c9611929d9a770fe2e3a393219d8b98f5de17fde539b2a7355c6db3fd2795f`，`cli.js.map` SHA-256 为 `7965012b7a5fc9e09d8d747a04c5c32b94696924536e217f686bb1e7ee70a657`。这些校验值用于核对资源恢复依据，不代表原构建流程已恢复。
 
 我已在本机验证随附打包程序可以显示帮助和版本信息。这项检查只覆盖打包文件的启动行为，不验证 TypeScript 源码能否安装依赖、编译或运行。
 

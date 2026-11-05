@@ -14,6 +14,7 @@
 - 我依据 API 重试消息构造器、错误 UI 和重试流程恢复了 `SystemAPIErrorMessage`，并将错误处理链上的直接类型导入改为引用独立类型文件；该类型通过使用临时 SDK 声明的 strict 检查，但仓库源码目录缺少 SDK 声明及依赖清单，完整消息联合类型和其它 API 错误变体仍未恢复。
 - 我依据消息构造器和查询流程恢复了 `SystemLocalCommandMessage` 与 `SystemMicrocompactBoundaryMessage`，并调整直接类型消费者；这两项局部契约不代表完整消息联合类型已经恢复。
 - 我依据 stop-hook 摘要构造器及 hook 归并消费者恢复了 `SystemStopHookSummaryMessage`，并将相关模块改为导入独立类型；完整消息联合类型仍缺失。
+- 我从随附 bundle 的静态字符串中补回了 verify skill 的三份 Markdown 和 ultraplan 提示词；资源通过 Bun 实际打包与字符串一致性检查。在相同 Bun 诊断配置下，完整 CLI 的本地模块解析错误由 16 处减至 12 处，完整构建仍未通过。
 - `src/entrypoints/agentSdkTypes.ts` 中的 SDK 函数目前是类型外壳，`query`、工具创建、会话读写等导出会直接抛出未实现错误。因此，SDK 类型检查和消息解析验证不能作为 agent SDK 核心 coding 流程已可运行的证据。
 - 我记录了当前源码构建缺口及其证据，详见[源码构建可复现性审计](docs/17-build-reproducibility-audit.md)。
 - 源码的依赖清单与构建入口尚未恢复，因此我暂不提供未经验证的源码构建命令。由于目前没有其他完整源码材料，我会继续依据仓库现存的 schema、调用点和测试重建可证实的部分，并明确记录推断边界；这不等于恢复了原始完整源码。

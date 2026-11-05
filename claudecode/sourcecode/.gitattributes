@@ -1,0 +1,3 @@
+# Preserve the recovered prompt strings across Windows checkouts.
+src/skills/bundled/verify/** text eol=lf
+src/utils/ultraplan/prompt.txt text eol=lf
