@@ -7,7 +7,7 @@ import { fileURLToPath } from 'node:url'
 const cli = fileURLToPath(new URL('../dist/cli.js', import.meta.url))
 const frame = (event, data) => `event: ${event}\ndata: ${JSON.stringify(data)}\n\n`
 
-test('built CLI executes an Edit tool turn against a local model fixture', async () => {
+async function runCoreSmoke(outputFormat, inputFormat = 'text') {
   const tempRoot = await mkdtemp(join(tmpdir(), 'coding-agent-core-'))
   const filePath = join(tempRoot, 'created.txt')
   const requests = []
@@ -74,16 +74,38 @@ test('built CLI executes an Edit tool turn against a local model fixture', async
       ANTHROPIC_BASE_URL: `http://127.0.0.1:${server.port}`,
       CLAUDE_CONFIG_DIR: join(tempRoot, 'config'),
     }
-    const child = Bun.spawn([process.execPath, cli, '--bare', '--print', '--output-format', 'json', '--max-turns', '2', '--allowedTools=Edit', 'Create a file for the smoke test'], {
-      cwd: tempRoot, env, stdout: 'pipe', stderr: 'pipe',
+    const child = Bun.spawn([
+      process.execPath, cli, '--bare', '--print', '--output-format', outputFormat,
+      ...(outputFormat === 'stream-json' ? ['--verbose'] : []),
+      ...(inputFormat === 'stream-json' ? ['--input-format', 'stream-json'] : []),
+      '--max-turns', '2', '--allowedTools=Edit',
+      ...(inputFormat === 'text' ? ['Create a file for the smoke test'] : []),
+    ], {
+      cwd: tempRoot, env, stdin: inputFormat === 'stream-json' ? 'pipe' : 'ignore',
+      stdout: 'pipe', stderr: 'pipe',
     })
+    if (inputFormat === 'stream-json') {
+      child.stdin.write(`${JSON.stringify({
+        type: 'user', session_id: '',
+        message: { role: 'user', content: 'Create a file for the smoke test' },
+        parent_tool_use_id: null,
+      })}\n`)
+      child.stdin.end()
+    }
     const timeout = setTimeout(() => child.kill(), 30_000)
     const [exitCode, stdout, stderr] = await Promise.all([
       child.exited, new Response(child.stdout).text(), new Response(child.stderr).text(),
     ])
     clearTimeout(timeout)
     if (exitCode !== 0) throw new Error(JSON.stringify({ exitCode, stdout, stderr, requests }))
-    expect(JSON.parse(stdout).result).toBe('FILE_WRITTEN')
+    const messages = outputFormat === 'stream-json'
+      ? stdout.trim().split(/\r?\n/).map(line => JSON.parse(line))
+      : [JSON.parse(stdout)]
+    const result = messages.findLast(message => message.type === 'result')
+    expect(result?.result).toBe('FILE_WRITTEN')
+    if (outputFormat === 'stream-json') {
+      expect(messages.some(message => message.type === 'assistant')).toBe(true)
+    }
     const written = await readFile(filePath, 'utf8').catch(error => {
       if (error.code === 'ENOENT') return null
       throw error
@@ -94,6 +116,7 @@ test('built CLI executes an Edit tool turn against a local model fixture', async
     }))
     expect(written).toBe('SMOKE_OK\n')
     expect(messageCalls).toBe(2)
+    expect(JSON.stringify(requests.find(request => request.path.endsWith('/messages'))?.messages)).toContain('Create a file for the smoke test')
     expect(JSON.stringify(requests.at(-1)?.messages)).toContain('toolu_coding_agent_smoke')
   } finally {
     server.stop(true)
@@ -102,4 +125,8 @@ test('built CLI executes an Edit tool turn against a local model fixture', async
     }
     await rm(tempRoot, { recursive: true, force: true })
   }
-}, 45_000)
+}
+
+test('built CLI executes an Edit turn with JSON output', () => runCoreSmoke('json'), 45_000)
+test('built CLI streams an Edit turn as NDJSON', () => runCoreSmoke('stream-json'), 45_000)
+test('built CLI accepts NDJSON input and streams an Edit turn', () => runCoreSmoke('stream-json', 'stream-json'), 45_000)

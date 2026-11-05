@@ -6,7 +6,7 @@
 
 ## 当前进度
 
-- 我建立了源码级 `package.json` 与重新生成的 `bun.lock`，并以现有实现及可核对的发布包版本为依据锁定依赖。在 Windows 全新克隆中，Bun 1.4.4 的冻结安装、完整 CLI 打包、`--version`、`--help`、包级模块解析、45 项回归测试和本地模型夹具的 Edit 工具闭环均通过。这份锁文件是新建的可复现依赖选择，不是原始锁文件；完整源码类型检查、真实模型服务调用及独立 Agent SDK 运行时仍待验收。
+- 我建立了源码级 `package.json` 与重新生成的 `bun.lock`，并以现有实现及可核对的发布包版本为依据锁定依赖。在 Windows 全新克隆中，Bun 1.4.4 的冻结安装、完整 CLI 打包、`--version`、`--help`、包级模块解析、45 项边界测试和本地模型夹具的 Edit 闭环均通过；夹具还覆盖 JSON、NDJSON 输出及 NDJSON 输入。会话元数据 API 也已接到现存存储实现并单独验证。这份锁文件是新建的可复现依赖选择，不是原始锁文件；完整源码类型检查、真实模型服务调用及独立 Agent SDK 的 `query` 与工具运行时仍待验收。
 - 我已在本机验证现有打包运行程序可以显示帮助和版本信息；这只证明打包程序可启动，不代表源码构建已经恢复。
 - 我已根据现有 Zod schema 恢复 SDK 核心类型声明与控制消息类型，并用临时 TypeScript 环境完成该部分局部类型检查。随后，我依据现有调用点和 schema 补回查询来源、快捷键、Shell/MCP/Web 搜索/任务/Agent/Skill 进度类型，以及 SDK effort 与 Settings 类型导出；我还按现有 SDK 事件注释重建了最小 workflow progress 结构，并修复 schema 解析会丢弃该字段的问题，局部解析验证确认额外负载得以保留。我从本地生成声明重建了 SDK 工具输入/输出类型模块，独立 TypeScript 检查通过；近期又依据 stop-hook 的生产和消费路径恢复 `StopHookInfo`，并完成对应的 strict 类型检查。SDK 工具类型的原始 schema 和生成流程仍缺失。这些增量尚未通过完整源码类型检查，也不代表完整源码已能安装、构建或运行。
 - 我依据 compact boundary 构造器、SDK schema、转换器和持久化/UI 消费点恢复了 `CompactMetadata` 与 `SystemCompactBoundaryMessage` 两个独立类型，并完成 strict 类型检查。这项改动只覆盖能够由现存实现证明的压缩消息契约，未恢复缺失的完整消息联合类型。

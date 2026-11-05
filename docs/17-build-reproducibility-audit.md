@@ -123,7 +123,7 @@ bun .\scripts\audit-source-build.mjs --include-packages
 
 我在新的 Windows 克隆中，仅加入本批新增的源码清单、锁文件、构建脚本、入口品牌文字和夹具测试，执行 `bun install --frozen-lockfile`、`bun run build`、`bun run test:core-smoke`、`bun run test:build-boundaries` 和 `bun run check:packages`，全部通过；`--version` 输出 `0.1.0 (Coding Agent)`，`--help` 也能启动。`test:core-smoke` 在临时目录启动本机模型接口夹具，让 CLI 经两次模型回合执行 `Edit` 工具创建文件并返回文本，随后验证文件内容。Bun 安装时阻止了 `protobufjs` 的一项 postinstall；上述构建和夹具流程未依赖它，该脚本是否影响其它功能仍待检查。
 
-这些结果验证了可重建的外部分发 CLI 与一条受控工具调用路径。测试没有真实 API 凭证，未验证模型服务联通、完整 TypeScript 类型检查、所有可选功能或仍抛出未实现错误的独立 Agent SDK 导出。
+这些结果验证了可重建的外部分发 CLI 与一条受控工具调用路径。新增会话列表与单会话元数据入口已接入本地 JSONL 存储实现，并通过隔离夹具验证排序、分页、缺失会话和 sidechain 过滤；该验证不覆盖 `query` 或工具创建接口。核心 CLI 夹具现覆盖单次 JSON 输出、NDJSON 流输出，以及 NDJSON 输入配合流输出，三条路径都实际驱动 `Edit` 工具写入临时文件。测试没有真实 API 凭证，未验证模型服务联通、完整 TypeScript 类型检查、所有可选功能或仍未实现的独立 SDK 查询和工具接口。
 
 恢复资源的 SHA-256 如下，路径相对于 `sourcecode`；校验值对应 UTF-8/LF 文件内容：
 
