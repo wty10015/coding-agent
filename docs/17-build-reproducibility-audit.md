@@ -23,6 +23,6 @@
 
 当前工作站原先没有 Bun 或 TypeScript 编译器。我用临时 `esbuild` 对 `sourcecode/src/entrypoints/cli.tsx` 做了 bundle 诊断：命令报告 1,649 个解析错误，首批错误包括 Bun 专用模块 `bun:bundle` 以及 `daemon/workerRegistry.js`、`daemon/main.js`、`cli/bg.js`、`cli/handlers/templateJobs.js` 和 `environment-runner/main.js` 等缺失的相对源码模块。临时诊断未写入项目目录，也不构成可复现的正式构建流程。
 
-我从 GitHub 对当前发布分支做了浅克隆检查。克隆中只有 `sourcecode/tsconfig.json` 这一构建相关清单，没有 `package.json`、依赖锁文件、构建脚本或 CLI 文件；`types/message.ts` 和 SDK `controlTypes.ts` 也仍缺失。因此干净克隆目前无法按文档安装、构建或运行核心 coding 流程。
+我从 GitHub 当前 `main` 做了新的 Windows 浅克隆，检出提交为 `73cd124`。源码目录中没有 `package.json`、任何锁文件、构建脚本或 CLI 文件；`types/message.ts` 和 SDK `controlTypes.ts` 等源码也仍缺失。在该目录运行 `npm install --package-lock=false --ignore-scripts` 虽返回成功，但 npm 没有项目清单可读取，因此没有安装项目依赖；在仓库内运行 `npm ci` 因缺少锁文件失败，`npm run` 因缺少 `package.json` 失败。对这份干净克隆的 CLI 入口运行 bundle 诊断，esbuild 报告 2,065 个解析错误，其中包括 `bun:bundle` 和多个缺失的相对源码模块。因此干净克隆目前无法安装项目依赖、构建或运行核心 coding 流程。
 
 目前缺少足以复现源码构建的依赖清单、精确版本锁定和多处被引用源码。获得这些原始材料后，我会从干净克隆开始记录安装、构建和核心验证步骤；在此之前，源码构建状态保持未通过。
