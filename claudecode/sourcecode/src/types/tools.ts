@@ -81,3 +81,10 @@ export type PowerShellProgress = {
 }
 
 export type ShellProgress = BashProgress | PowerShellProgress
+
+export type SdkWorkflowProgress = {
+  type: string
+  index: number
+  phaseIndex: number
+  [key: string]: unknown
+}

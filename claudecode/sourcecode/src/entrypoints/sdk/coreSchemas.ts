@@ -1761,6 +1761,17 @@ export const SDKTaskProgressMessageSchema = lazySchema(() =>
     }),
     last_tool_name: z.string().optional(),
     summary: z.string().optional(),
+    workflow_progress: z
+      .array(
+        z
+          .object({
+            type: z.string(),
+            index: z.number(),
+            phaseIndex: z.number(),
+          })
+          .passthrough(),
+      )
+      .optional(),
     uuid: UUIDPlaceholder(),
     session_id: z.string(),
   }),
