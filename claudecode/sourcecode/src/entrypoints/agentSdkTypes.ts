@@ -14,6 +14,7 @@ import type {
   ToolAnnotations,
 } from '@modelcontextprotocol/sdk/types.js'
 import { getSessionInfoImpl } from '../utils/getSessionInfoImpl.js'
+import { getSessionMessagesImpl } from '../utils/getSessionMessagesImpl.js'
 import { listSessionsImpl } from '../utils/listSessionsImpl.js'
 
 // Control protocol types for SDK builders (bridge subpath consumers)
@@ -69,6 +70,8 @@ export type {
   SessionMutationOptions,
   ForkSessionOptions,
   ForkSessionResult,
+  GetSessionMessagesOptions,
+  SessionMessage,
   SDKSessionInfo,
 }
 
@@ -178,10 +181,10 @@ export async function unstable_v2_prompt(
  * @returns Array of messages, or empty array if session not found
  */
 export async function getSessionMessages(
-  _sessionId: string,
-  _options?: GetSessionMessagesOptions,
+  sessionId: string,
+  options?: GetSessionMessagesOptions,
 ): Promise<SessionMessage[]> {
-  throw new Error('getSessionMessages is not implemented in the SDK')
+  return getSessionMessagesImpl(sessionId, options)
 }
 
 /**
