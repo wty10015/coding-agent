@@ -52,7 +52,7 @@ npm exec --yes --package=bun@1.4.4 -- bun install --frozen-lockfile
 npm exec --yes --package=bun@1.4.4 -- bun run verify
 ```
 
-冻结安装报告 519 个包，`verify` 报告 56 项测试、343 次断言和空诊断包审计。安装器阻止了一个可选 postinstall；它没有参与构建、测试或包解析审计。
+冻结安装报告 519 个包，`verify` 报告 56 项测试、343 次断言和空诊断包审计。随后用完整历史的普通 Git 克隆重复这组命令，结果保持一致。安装器阻止了一个可选 postinstall；它没有参与构建、测试或包解析审计。
 
 安装 Bun 1.4.4 后，也可以直接在源码目录执行：
 
