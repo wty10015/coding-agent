@@ -152,3 +152,5 @@ bun .\scripts\audit-source-build.mjs --include-packages
 重建出的实现与原始源码逐字或行为完全一致，目前无法验证。当前已通过的是 Windows 干净克隆的冻结安装、CLI 构建和本地模型夹具的 Edit 流程；完整源码类型检查与真实模型服务的核心请求仍缺少通过证据，独立 Agent SDK 的运行时导出仍未实现，因此七日最终验收继续保持未完成。
 
 我已将 CLI 启动检查纳入 `scripts/core-cli-smoke.test.mjs`：测试构建后的 `--version` 与 `--help`，以源码 manifest 校验版本输出，并检查退出码、帮助文本及空错误输出。`bun run verify` 会自动运行这项检查；它补足此前只在本机手动确认启动信息的差异，不改变完整源码类型检查、真实模型服务和独立 Agent SDK 尚未通过的状态。
+
+我随后从远端 `main` 发布快照建立了全新 Windows 验收目录，没有叠加本地工作区改动。`bun install --frozen-lockfile` 成功核对 519 个包；随后 `bun run verify` 完成源码打包、56 项测试和 343 次断言，包解析审计返回 `success: true` 且诊断为空。Bun 报告一个可选 postinstall 被阻止，但本次构建、测试和审计均未依赖它。该证据证明当前发布快照可按文档安装、构建并通过受控核心 coding 验收；真实模型服务、完整 TypeScript 类型检查及未实现 SDK 接口仍不在通过范围内。

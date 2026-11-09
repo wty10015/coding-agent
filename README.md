@@ -25,6 +25,7 @@
 - 我依据 `RemoteIO` 的调用及 WebSocket/SSE 两种传输类的实际方法，恢复了共享 `Transport` 类型契约，覆盖连接、消息写入、关闭、数据与关闭回调；专属回调仍由各自实现负责。该恢复不增加运行时代码，完整源码类型检查仍有其他缺失模块和 Bun 类型缺口。
 - 我将公开 SDK 的 `listSessions`、`getSessionInfo`、`getSessionMessages`、`renameSession` 和 `tagSession` 接到现存会话存储实现。消息读取复用 transcript loader、parent 链恢复和字段清理逻辑；会话变更复用 CLI 已有的 `custom-title` 与 `tag` JSONL 记录格式，`tagSession(..., null)` 使用现有空 tag 记录清除标签。隔离夹具覆盖分支选择、消息顺序、分页、元数据写入、清除标签及无效输入。独立 SDK 的 `query`、自定义工具运行时、会话创建和 fork 仍未实现，因此这不代表独立 Agent SDK 的核心 coding 流程已可运行。
 - 我把已验证的 CLI `--version` 与 `--help` 启动检查加入源码验证套件；测试从项目 manifest 读取预期版本，并检查命令退出码、输出和错误输出。该项随 `bun run verify` 自动执行，与现有本地模型夹具的 Edit 闭环共同覆盖源码构建后的 CLI 启动和核心工具路径。
+- 我从远端 `main` 的发布快照建立了全新 Windows 验收目录，执行 `bun install --frozen-lockfile`、`bun run verify`；安装核对 519 个包，CLI 构建成功，56 项测试、343 次断言和包解析审计全部通过。安装器阻止的一个可选 postinstall 不影响本次构建、测试或审计；该快照验证的是当前可复现 CLI 与本地模型夹具路径，不等于真实模型服务或未实现 SDK 接口已经通过。
 - 我记录了当前源码构建缺口及其证据，详见[源码构建可复现性审计](docs/17-build-reproducibility-audit.md)。
 - 由于没有其他完整源码材料，我会继续依据仓库现存的 schema、调用点和测试重建可证实的部分，并明确记录推断边界；已通过的 CLI 构建与本地夹具测试不等于恢复了原始完整源码。
 
