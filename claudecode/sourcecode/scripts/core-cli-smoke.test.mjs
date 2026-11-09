@@ -5,7 +5,34 @@ import { basename, dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const cli = fileURLToPath(new URL('../dist/cli.js', import.meta.url))
+const packageJson = JSON.parse(await readFile(new URL('../package.json', import.meta.url), 'utf8'))
 const frame = (event, data) => `event: ${event}\ndata: ${JSON.stringify(data)}\n\n`
+
+async function runCli(args) {
+  const child = Bun.spawn([process.execPath, cli, ...args], {
+    stdout: 'pipe',
+    stderr: 'pipe',
+  })
+  const [exitCode, stdout, stderr] = await Promise.all([
+    child.exited,
+    new Response(child.stdout).text(),
+    new Response(child.stderr).text(),
+  ])
+  return { exitCode, stdout, stderr }
+}
+
+test('built CLI reports its version and help successfully', async () => {
+  const version = await runCli(['--version'])
+  expect(version.exitCode).toBe(0)
+  expect(version.stdout.trim()).toBe(`${packageJson.version} (Coding Agent)`)
+  expect(version.stderr).toBe('')
+
+  const help = await runCli(['--help'])
+  expect(help.exitCode).toBe(0)
+  expect(help.stdout).toContain('Usage: coding-agent')
+  expect(help.stdout).toContain('Coding Agent - starts an interactive session')
+  expect(help.stderr).toBe('')
+}, 15_000)
 
 async function runCoreSmoke(outputFormat, inputFormat = 'text') {
   const tempRoot = await mkdtemp(join(tmpdir(), 'coding-agent-core-'))
