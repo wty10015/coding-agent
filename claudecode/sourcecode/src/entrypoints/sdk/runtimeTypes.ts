@@ -11,4 +11,6 @@ export type GetSessionMessagesOptions = {
   includeSystemMessages?: boolean
 }
 
+export type SessionMutationOptions = { dir?: string }
+
 export type SessionMessage = SerializedMessage
