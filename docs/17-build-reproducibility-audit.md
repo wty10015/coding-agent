@@ -2,7 +2,7 @@
 
 ## 结论
 
-我已建立源码级依赖清单与新锁文件，并在 Windows 全新克隆中以 Bun 1.4.4 完成冻结安装、CLI 打包、启动帮助和本地模型夹具的 Edit 工具闭环。这证明当前外部分发 CLI 的构建和一条受控 coding 路径可复现；它不是原始依赖锁的恢复，也不证明完整源码类型检查、真实模型服务或独立 Agent SDK 运行时已通过。下文保留各阶段发现的缺口及修复证据；阶段性失败不代表现在仍在相同位置。
+我已建立源码级依赖清单与新锁文件，并在 Windows 全新 Git 浅克隆中以 Bun 1.4.4 完成冻结安装、CLI 打包、启动帮助和本地模型夹具的 Edit 工具闭环。克隆目录的 HEAD 与 GitHub `main` 发布 SHA 一致，安装了 519 个包，56 项测试、343 次断言和包解析审计通过。这证明当前外部分发 CLI 的构建和一条受控 coding 路径可复现；它不是原始依赖锁的恢复，也不证明完整源码类型检查、真实模型服务或独立 Agent SDK 运行时已通过。下文保留各阶段发现的缺口及修复证据；阶段性失败不代表现在仍在相同位置。
 
 ## 已核对的材料
 
@@ -41,7 +41,20 @@
 
 ## 验证边界
 
-我用仓库外临时安装的 Bun 1.4.4 重新检查了完整 CLI 入口。源码注释要求 `feature()` 在构建时排除未启用功能，并将 `process.env.USER_TYPE` 固定为 `external`；Ink 的 devtools 导入还按 `NODE_ENV` 排除。我将这些已有构建约定写入 `sourcecode/scripts/audit-source-build.mjs`，使用 Markdown/文本 loader，且不写出不完整产物。该脚本保留外部包导入，诊断范围仅为本地运行时模块解析；它不验证依赖安装、完整打包、TypeScript 类型或运行时行为。安装 Bun 1.4.4 后，进入源码目录执行：
+我用仓库外临时安装的 Bun 1.4.4 重新检查了完整 CLI 入口。源码注释要求 `feature()` 在构建时排除未启用功能，并将 `process.env.USER_TYPE` 固定为 `external`；Ink 的 devtools 导入还按 `NODE_ENV` 排除。我将这些已有构建约定写入 `sourcecode/scripts/audit-source-build.mjs`，使用 Markdown/文本 loader，且不写出不完整产物。该脚本保留外部包导入，诊断范围仅为本地运行时模块解析；它不验证依赖安装、完整打包、TypeScript 类型或运行时行为。
+
+我随后从 GitHub `main` 做了全新的浅克隆，在克隆目录的 `claudecode/sourcecode` 中执行冻结安装和完整验证：
+
+```powershell
+git clone --depth 1 https://github.com/wty10015/coding-agent.git
+cd .\coding-agent\claudecode\sourcecode
+npm exec --yes --package=bun@1.4.4 -- bun install --frozen-lockfile
+npm exec --yes --package=bun@1.4.4 -- bun run verify
+```
+
+冻结安装报告 519 个包，`verify` 报告 56 项测试、343 次断言和空诊断包审计。安装器阻止了一个可选 postinstall；它没有参与构建、测试或包解析审计。
+
+安装 Bun 1.4.4 后，也可以直接在源码目录执行：
 
 ```powershell
 bun .\scripts\audit-source-build.mjs

@@ -26,6 +26,7 @@
 - 我将公开 SDK 的 `listSessions`、`getSessionInfo`、`getSessionMessages`、`renameSession` 和 `tagSession` 接到现存会话存储实现。消息读取复用 transcript loader、parent 链恢复和字段清理逻辑；会话变更复用 CLI 已有的 `custom-title` 与 `tag` JSONL 记录格式，`tagSession(..., null)` 使用现有空 tag 记录清除标签。隔离夹具覆盖分支选择、消息顺序、分页、元数据写入、清除标签及无效输入。独立 SDK 的 `query`、自定义工具运行时、会话创建和 fork 仍未实现，因此这不代表独立 Agent SDK 的核心 coding 流程已可运行。
 - 我把已验证的 CLI `--version` 与 `--help` 启动检查加入源码验证套件；测试从项目 manifest 读取预期版本，并检查命令退出码、输出和错误输出。该项随 `bun run verify` 自动执行，与现有本地模型夹具的 Edit 闭环共同覆盖源码构建后的 CLI 启动和核心工具路径。
 - 我从远端 `main` 的发布快照建立了全新 Windows 验收目录，执行 `bun install --frozen-lockfile`、`bun run verify`；安装核对 519 个包，CLI 构建成功，56 项测试、343 次断言和包解析审计全部通过。安装器阻止的一个可选 postinstall 不影响本次构建、测试或审计；该快照验证的是当前可复现 CLI 与本地模型夹具路径，不等于真实模型服务或未实现 SDK 接口已经通过。
+- 我又从 GitHub `main` 做了全新的浅克隆，并在 checkout 内用 Bun 1.4.4 完成 `bun install --frozen-lockfile` 与 `bun run verify`；克隆目录的 HEAD 与远端发布 SHA 一致，519 个包安装完成，56 项测试、343 次断言和包解析审计再次通过。此次验证证明文档中的 Git 克隆路径可以复现当前 CLI 构建和本地模型夹具流程；被安装器阻止的可选 postinstall、真实模型服务和未实现 SDK 接口仍不在通过范围内。
 - 我记录了当前源码构建缺口及其证据，详见[源码构建可复现性审计](docs/17-build-reproducibility-audit.md)。
 - 我沿 SDK 入口、MCP 配置、控制消息和传输实现核对了自定义工具运行时；现有源码只证明 CLI 侧的 SDK MCP 连接与工具发现路径，`tool()`、`createSdkMcpServer()`、`query()` 及其运行时类型仍缺少完整契约，因此我保留明确桩并记录证据边界，详见[SDK 运行时证据记录](docs/18-sdk-runtime-evidence.md)。
 - 由于没有其他完整源码材料，我会继续依据仓库现存的 schema、调用点和测试重建可证实的部分，并明确记录推断边界；已通过的 CLI 构建与本地夹具测试不等于恢复了原始完整源码。
