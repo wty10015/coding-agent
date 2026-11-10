@@ -28,6 +28,7 @@
 - 我从远端 `main` 的发布快照建立了全新 Windows 验收目录，执行 `bun install --frozen-lockfile`、`bun run verify`；安装核对 519 个包，CLI 构建成功，56 项测试、343 次断言和包解析审计全部通过。安装器阻止的一个可选 postinstall 不影响本次构建、测试或审计；该快照验证的是当前可复现 CLI 与本地模型夹具路径，不等于真实模型服务或未实现 SDK 接口已经通过。
 - 我又从 GitHub `main` 做了全新的浅克隆，并在 checkout 内用 Bun 1.4.4 完成 `bun install --frozen-lockfile` 与 `bun run verify`；克隆目录的 HEAD 与远端发布 SHA 一致，519 个包安装完成，56 项测试、343 次断言和包解析审计再次通过。此次验证证明文档中的 Git 克隆路径可以复现当前 CLI 构建和本地模型夹具流程；被安装器阻止的可选 postinstall、真实模型服务和未实现 SDK 接口仍不在通过范围内。
 - 我在最新发布提交 `ab63f60` 上再次建立全新的 Windows 浅克隆，按同一文档执行冻结安装和 `bun run verify`；克隆 HEAD、远端 `main` 和验收提交一致，519 个包安装完成，56 项测试、343 次断言及包解析审计再次通过。可选 postinstall 仍被安装器阻止，但没有参与构建、测试或审计；真实模型服务和未实现 SDK 接口仍不在通过范围内。
+- 我随后对最新提交 `e00ae87` 创建全新的 Windows detached checkout，并按同一文档执行冻结安装和 `bun run verify`；精确提交的 checkout 安装 519 个包，56 项测试、343 次断言及包解析审计再次通过。该次 GitHub 浅克隆重试受网络连接限制，因此这条结果标注为本地 Git 对象的干净 checkout 验收，不替代网络恢复后的重新克隆。
 - 我随后用完整历史的普通 Git 克隆再次执行同一组命令；依赖安装和验证结果保持一致，说明发布内容不依赖浅克隆或特定 Git 历史深度。
 - 我记录了当前源码构建缺口及其证据，详见[源码构建可复现性审计](docs/17-build-reproducibility-audit.md)。
 - 我又沿 `QueryEngine`、`runHeadless`、`StructuredIO` 和 `ask()` 的真实调用点核对了受控 coding 回合：现有 CLI 已能把输入交给会话引擎并按 NDJSON 输出控制请求、SDK 事件和结果，但公开 SDK 的 `query()` 仍缺少启动、选项映射和 MCP server 生命周期契约，因此我继续保留未实现状态，并记录了逐文件证据，详见[SDK 运行时证据记录](docs/18-sdk-runtime-evidence.md)。
