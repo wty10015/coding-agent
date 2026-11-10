@@ -29,6 +29,7 @@
 - 我又从 GitHub `main` 做了全新的浅克隆，并在 checkout 内用 Bun 1.4.4 完成 `bun install --frozen-lockfile` 与 `bun run verify`；克隆目录的 HEAD 与远端发布 SHA 一致，519 个包安装完成，56 项测试、343 次断言和包解析审计再次通过。此次验证证明文档中的 Git 克隆路径可以复现当前 CLI 构建和本地模型夹具流程；被安装器阻止的可选 postinstall、真实模型服务和未实现 SDK 接口仍不在通过范围内。
 - 我随后用完整历史的普通 Git 克隆再次执行同一组命令；依赖安装和验证结果保持一致，说明发布内容不依赖浅克隆或特定 Git 历史深度。
 - 我记录了当前源码构建缺口及其证据，详见[源码构建可复现性审计](docs/17-build-reproducibility-audit.md)。
+- 我又沿 `QueryEngine`、`runHeadless`、`StructuredIO` 和 `ask()` 的真实调用点核对了受控 coding 回合：现有 CLI 已能把输入交给会话引擎并按 NDJSON 输出控制请求、SDK 事件和结果，但公开 SDK 的 `query()` 仍缺少启动、选项映射和 MCP server 生命周期契约，因此我继续保留未实现状态，并记录了逐文件证据，详见[SDK 运行时证据记录](docs/18-sdk-runtime-evidence.md)。
 - 我沿 SDK 入口、MCP 配置、控制消息和传输实现核对了自定义工具运行时；现有源码只证明 CLI 侧的 SDK MCP 连接与工具发现路径，`tool()`、`createSdkMcpServer()`、`query()` 及其运行时类型仍缺少完整契约，因此我保留明确桩并记录证据边界，详见[SDK 运行时证据记录](docs/18-sdk-runtime-evidence.md)。
 - 由于没有其他完整源码材料，我会继续依据仓库现存的 schema、调用点和测试重建可证实的部分，并明确记录推断边界；已通过的 CLI 构建与本地夹具测试不等于恢复了原始完整源码。
 
