@@ -31,6 +31,7 @@
 - 我随后对最新提交 `e00ae87` 创建全新的 Windows detached checkout，并按同一文档执行冻结安装和 `bun run verify`；精确提交的 checkout 安装 519 个包，56 项测试、343 次断言及包解析审计再次通过。该次 GitHub 浅克隆重试受网络连接限制，因此这条结果标注为本地 Git 对象的干净 checkout 验收，不替代网络恢复后的重新克隆。
 - 我随后用完整历史的普通 Git 克隆再次执行同一组命令；依赖安装和验证结果保持一致，说明发布内容不依赖浅克隆或特定 Git 历史深度。
 - 我记录了当前源码构建缺口及其证据，详见[源码构建可复现性审计](docs/17-build-reproducibility-audit.md)。
+- 我新增了[发布就绪审计](docs/19-release-readiness-audit.md)，把已验证的 Windows 安装、构建、核心 coding 流程、排除材料和未完成 SDK 范围集中列出，作为最终验收日的复核入口。
 - 我又沿 `QueryEngine`、`runHeadless`、`StructuredIO` 和 `ask()` 的真实调用点核对了受控 coding 回合：现有 CLI 已能把输入交给会话引擎并按 NDJSON 输出控制请求、SDK 事件和结果，但公开 SDK 的 `query()` 仍缺少启动、选项映射和 MCP server 生命周期契约，因此我继续保留未实现状态，并记录了逐文件证据，详见[SDK 运行时证据记录](docs/18-sdk-runtime-evidence.md)。
 - 我沿 SDK 入口、MCP 配置、控制消息和传输实现核对了自定义工具运行时；现有源码只证明 CLI 侧的 SDK MCP 连接与工具发现路径，`tool()`、`createSdkMcpServer()`、`query()` 及其运行时类型仍缺少完整契约，因此我保留明确桩并记录证据边界，详见[SDK 运行时证据记录](docs/18-sdk-runtime-evidence.md)。
 - 由于没有其他完整源码材料，我会继续依据仓库现存的 schema、调用点和测试重建可证实的部分，并明确记录推断边界；已通过的 CLI 构建与本地夹具测试不等于恢复了原始完整源码。
