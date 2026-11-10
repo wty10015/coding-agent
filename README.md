@@ -32,6 +32,7 @@
 - 我随后用完整历史的普通 Git 克隆再次执行同一组命令；依赖安装和验证结果保持一致，说明发布内容不依赖浅克隆或特定 Git 历史深度。
 - 我记录了当前源码构建缺口及其证据，详见[源码构建可复现性审计](docs/17-build-reproducibility-audit.md)。
 - 我新增了[发布就绪审计](docs/19-release-readiness-audit.md)，把已验证的 Windows 安装、构建、核心 coding 流程、排除材料和未完成 SDK 范围集中列出，作为最终验收日的复核入口。
+- 我又从 GitHub `main` 创建全新的 Windows 浅克隆，按 README 使用 `npm exec --package=bun@1.4.4` 引导 Bun 1.4.4 完成冻结安装、`bun run verify`、CLI 版本和帮助检查；克隆 `HEAD` 与远端 `main` 同为 `fe7866d`，519 个包、56 项测试、343 次断言及包解析审计均通过。详细命令和边界见[全新克隆复核记录](docs/20-clean-clone-verification.md)。
 - 我又沿 `QueryEngine`、`runHeadless`、`StructuredIO` 和 `ask()` 的真实调用点核对了受控 coding 回合：现有 CLI 已能把输入交给会话引擎并按 NDJSON 输出控制请求、SDK 事件和结果，但公开 SDK 的 `query()` 仍缺少启动、选项映射和 MCP server 生命周期契约，因此我继续保留未实现状态，并记录了逐文件证据，详见[SDK 运行时证据记录](docs/18-sdk-runtime-evidence.md)。
 - 我沿 SDK 入口、MCP 配置、控制消息和传输实现核对了自定义工具运行时；现有源码只证明 CLI 侧的 SDK MCP 连接与工具发现路径，`tool()`、`createSdkMcpServer()`、`query()` 及其运行时类型仍缺少完整契约，因此我保留明确桩并记录证据边界，详见[SDK 运行时证据记录](docs/18-sdk-runtime-evidence.md)。
 - 由于没有其他完整源码材料，我会继续依据仓库现存的 schema、调用点和测试重建可证实的部分，并明确记录推断边界；已通过的 CLI 构建与本地夹具测试不等于恢复了原始完整源码。
@@ -40,19 +41,19 @@
 
 ## Windows 源码安装与验证
 
-先安装 Bun 1.4.4 并确认 `bun --version`，然后在 PowerShell 中执行：
+需要已安装 Node.js 和 npm。在 PowerShell 中使用 `npm exec` 临时引导固定版本的 Bun，不需要全局安装 Bun：
 
 ```powershell
 git clone https://github.com/wty10015/coding-agent.git
 $source = (Resolve-Path .\coding-agent\*\sourcecode).Path
 cd $source
-bun install --frozen-lockfile
-bun run verify
-bun .\dist\cli.js --version
-bun .\dist\cli.js --help
+npm exec --yes --package=bun@1.4.4 -- bun install --frozen-lockfile
+npm exec --yes --package=bun@1.4.4 -- bun run verify
+npm exec --yes --package=bun@1.4.4 -- bun .\dist\cli.js --version
+npm exec --yes --package=bun@1.4.4 -- bun .\dist\cli.js --help
 ```
 
-`verify` 依次构建 CLI、运行源码目录中的五个测试文件并检查包模块解析，避免核心夹具因尚未生成 `dist/cli.js` 而失败。测试覆盖构建边界、会话元数据和核心 Edit 工具流程；模型 API 由本机夹具模拟，不发送真实模型请求。构建不包含整个源码树的 TypeScript 类型检查；真实服务与独立 SDK 的查询及工具接口仍需验收。单独运行 `bun run test` 时，请先执行 `bun run build`。
+`verify` 依次构建 CLI、运行源码目录中的测试文件并检查包模块解析，避免核心夹具因尚未生成 `dist/cli.js` 而失败。测试覆盖构建边界、会话元数据和核心 Edit 工具流程；模型 API 由本机夹具模拟，不发送真实模型请求。构建不包含整个源码树的 TypeScript 类型检查；真实服务与独立 SDK 的查询及工具接口仍需验收。单独运行测试时，可将上方命令中的 `verify` 替换为 `test`；若只运行 `build`，CLI 生成后再单独运行测试。
 
 ## 本地凭证
 
