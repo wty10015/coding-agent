@@ -2,15 +2,15 @@
 
 ## 我的验收结论
 
-我从 GitHub `main` 建立了新的 Windows 浅克隆，并把验收目录放在 D 盘以避开系统临时盘空间不足。克隆得到的 `HEAD`、克隆后实时读取的远端 `main` 和 GitHub API 返回的提交均为 `4261ee330e4e0b050b00e4167bda7913aeb98f15`。这次结果满足“从 GitHub 干净克隆按文档安装、构建并完成受控核心 coding 验收”的证据要求。
+我从 GitHub `main` 建立了新的 Windows 浅克隆，并把验收目录放在 D 盘以避开系统临时盘空间不足。克隆得到的 `HEAD`、克隆后实时读取的远端 `main` 和 GitHub API 返回的提交均为 `1cb38139e27bab213a48431ef3fcaae5a87c9853`。这次结果满足“从 GitHub 干净克隆按文档安装、构建并完成受控核心 coding 验收”的证据要求。
 
 这项验收覆盖当前源码级 CLI 分发和本地模型夹具驱动的 Edit 流程，不扩大完整 TypeScript 类型检查、真实模型服务或尚未实现 SDK 公开入口的范围。那些缺口仍在发布审计中明确列出。
 
 ## 执行结果
 
-- GitHub API 读取 `main`：`4261ee330e4e0b050b00e4167bda7913aeb98f15`。
-- 全新浅克隆的 `HEAD`：`4261ee330e4e0b050b00e4167bda7913aeb98f15`。
-- 克隆内 `git ls-remote origin refs/heads/main`：`4261ee330e4e0b050b00e4167bda7913aeb98f15`。
+- GitHub API 读取 `main`：`1cb38139e27bab213a48431ef3fcaae5a87c9853`。
+- 全新浅克隆的 `HEAD`：`1cb38139e27bab213a48431ef3fcaae5a87c9853`。
+- 克隆内 `git ls-remote origin refs/heads/main`：`1cb38139e27bab213a48431ef3fcaae5a87c9853`。
 - `npm exec --yes --package=bun@1.4.4 -- bun --version` 返回 `1.4.4`。
 - `npm exec --yes --package=bun@1.4.4 -- bun install --frozen-lockfile` 安装 519 个包；一个可选 postinstall 被阻止，但没有参与后续验证。
 - `npm exec --yes --package=bun@1.4.4 -- bun run verify` 通过：CLI 构建成功，56 项测试、343 次断言通过，包解析审计返回 `success: true` 且诊断为空。
