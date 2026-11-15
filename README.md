@@ -38,6 +38,7 @@
 - 我又沿 `QueryEngine`、`runHeadless`、`StructuredIO` 和 `ask()` 的真实调用点核对了受控 coding 回合：现有 CLI 已能把输入交给会话引擎并按 NDJSON 输出控制请求、SDK 事件和结果，但公开 SDK 的 `query()` 仍缺少启动、选项映射和 MCP server 生命周期契约，因此我继续保留未实现状态，并记录了逐文件证据，详见[SDK 运行时证据记录](docs/18-sdk-runtime-evidence.md)。
 - 我沿 SDK 入口、MCP 配置、控制消息和传输实现核对了自定义工具运行时；现有源码只证明 CLI 侧的 SDK MCP 连接与工具发现路径，`tool()`、`createSdkMcpServer()`、`query()` 及其运行时类型仍缺少完整契约，因此我保留明确桩并记录证据边界，详见[SDK 运行时证据记录](docs/18-sdk-runtime-evidence.md)。
 - 由于没有其他完整源码材料，我会继续依据仓库现存的 schema、调用点和测试重建可证实的部分，并明确记录推断边界；已通过的 CLI 构建与本地夹具测试不等于恢复了原始完整源码。
+- 我又对随附编译材料、source map、工具声明和现有分支命令做了源码级契约审计；这些材料仍不能证明公开 SDK 的 `query`、工具工厂、MCP server 生命周期、V2 session 或 `forkSession` 语义，因此我没有凭空补写入口，继续把该范围列为未完成，详见[SDK 公共入口契约证据审计](docs/23-sdk-contract-source-audit.md)。
 
 架构分析文档中的项目称呼和快照版本信息采用通用表述；为保证技术分析可核验，API、协议和环境变量等实现标识按现有源码保留。
 
