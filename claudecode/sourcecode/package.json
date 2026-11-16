@@ -13,6 +13,7 @@
     "test:core-smoke": "bun test scripts/core-cli-smoke.test.mjs",
     "test:sdk-sessions": "bun test scripts/sdk-session-list.test.mjs scripts/sdk-session-messages.test.mjs scripts/sdk-session-mutations.test.mjs scripts/sdk-session-fork.test.mjs",
     "test:sdk-tool": "bun test scripts/sdk-tool-definition.test.mjs",
+    "test:sdk-mcp": "bun test scripts/sdk-mcp-server-definition.test.mjs",
     "test:sdk-scheduled": "bun test scripts/sdk-scheduled-tasks.test.mjs",
     "test:build-boundaries": "bun test scripts/optional-imports.test.mjs scripts/dialog-launchers.test.mjs scripts/audit-source-build.test.mjs"
   },

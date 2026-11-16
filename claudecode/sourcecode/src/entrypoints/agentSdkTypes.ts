@@ -126,9 +126,18 @@ type CreateSdkMcpServerOptions = {
  * If your SDK MCP calls will run longer than 60s, override CLAUDE_CODE_STREAM_CLOSE_TIMEOUT
  */
 export function createSdkMcpServer(
-  _options: CreateSdkMcpServerOptions,
+  options: CreateSdkMcpServerOptions,
 ): McpSdkServerConfigWithInstance {
-  throw new Error('not implemented')
+  const tools = options.tools ? [...options.tools] : []
+  return {
+    type: 'sdk',
+    name: options.name,
+    instance: {
+      name: options.name,
+      ...(options.version === undefined ? {} : { version: options.version }),
+      tools,
+    },
+  }
 }
 
 export class AbortError extends Error {}

@@ -48,7 +48,7 @@ export type McpSdkServerConfigWithInstance = {
   name: string
   instance: {
     name: string
-    version: string
+    version?: string
     tools: Array<SdkMcpToolDefinition>
   }
 }
