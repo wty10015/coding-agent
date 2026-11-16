@@ -68,6 +68,8 @@ import type {
   SessionMessage,
   SessionMutationOptions,
 } from './sdk/runtimeTypes.js'
+import { z } from 'zod/v4'
+import { zodToJsonSchema } from '../utils/zodToJsonSchema.js'
 
 export type {
   ListSessionsOptions,
@@ -81,20 +83,28 @@ export type {
 }
 
 export function tool<Schema extends AnyZodRawShape>(
-  _name: string,
-  _description: string,
-  _inputSchema: Schema,
-  _handler: (
+  name: string,
+  description: string,
+  inputSchema: Schema,
+  handler: (
     args: InferShape<Schema>,
     extra: unknown,
   ) => Promise<CallToolResult>,
-  _extras?: {
+  extras?: {
     annotations?: ToolAnnotations
     searchHint?: string
     alwaysLoad?: boolean
   },
 ): SdkMcpToolDefinition<Schema> {
-  throw new Error('not implemented')
+  const zodSchema = z.object(inputSchema)
+  return {
+    name,
+    description,
+    inputSchema: zodSchema,
+    inputSchemaJson: zodToJsonSchema(zodSchema),
+    handler,
+    ...extras,
+  }
 }
 
 type CreateSdkMcpServerOptions = {

@@ -36,10 +36,10 @@
 - 我又对已知最后一次成功推送的 `8feae3e` 建立全新的 Windows detached checkout，519 个包的冻结安装、CLI 构建、56 项测试、343 次断言、包解析审计以及版本/帮助检查均通过。复核期间 GitHub 连接重置，因此我明确将它记录为本地 Git 对象的干净 checkout，而不是新的远端克隆；第七天的远端 SHA 与全新克隆验收仍待完成，详见[最新提交复核记录](docs/21-latest-commit-verification.md)。
 - 我在第七天从 GitHub `main` 建立了新的 Windows 浅克隆，并在 D 盘完成 README 中的冻结安装、CLI 构建、核心 Edit 流程、版本和帮助检查。克隆 `HEAD`、实时远端 `main` 和 GitHub API 均核对为 `1cb3813`；519 个包、56 项测试、343 次断言和包解析审计全部通过。完整类型检查、真实模型服务和未实现 SDK 入口仍按审计记录披露，详见[GitHub 全新克隆最终验收](docs/22-github-clean-clone-final.md)。
 - 我又沿 `QueryEngine`、`runHeadless`、`StructuredIO` 和 `ask()` 的真实调用点核对了受控 coding 回合：现有 CLI 已能把输入交给会话引擎并按 NDJSON 输出控制请求、SDK 事件和结果，但公开 SDK 的 `query()` 仍缺少启动、选项映射和 MCP server 生命周期契约，因此我继续保留未实现状态，并记录了逐文件证据，详见[SDK 运行时证据记录](docs/18-sdk-runtime-evidence.md)。
-- 我沿 SDK 入口、MCP 配置、控制消息和传输实现核对了自定义工具运行时；现有源码只证明 CLI 侧的 SDK MCP 连接与工具发现路径，`tool()`、`createSdkMcpServer()`、`query()` 及其运行时类型仍缺少完整契约，因此我保留明确桩并记录证据边界，详见[SDK 运行时证据记录](docs/18-sdk-runtime-evidence.md)。
+- 我沿 SDK 入口、MCP 配置、控制消息和传输实现核对了自定义工具运行时；现有源码只证明 CLI 侧的 SDK MCP 连接与工具发现路径，因此我先把 `tool()` 恢复为可验证的纯定义构造器：保留 Zod 对象、生成 JSON Schema，并保留 handler 与工具元数据。`createSdkMcpServer()`、`query()` 及其完整运行时类型仍缺少进程启动、实例注册和清理契约，继续保留明确桩并记录证据边界，详见[SDK 运行时证据记录](docs/18-sdk-runtime-evidence.md)和[工具定义验证记录](docs/25-sdk-tool-definition-verification.md)。
 - 由于没有其他完整源码材料，我会继续依据仓库现存的 schema、调用点和测试重建可证实的部分，并明确记录推断边界；已通过的 CLI 构建与本地夹具测试不等于恢复了原始完整源码。
 - 我又对随附编译材料、source map、工具声明和现有分支命令做了源码级契约审计；这些材料仍不能证明公开 SDK 的 `query`、工具工厂、MCP server 生命周期、V2 session 或 `forkSession` 语义，因此我没有凭空补写入口，继续把该范围列为未完成，详见[SDK 公共入口契约证据审计](docs/23-sdk-contract-source-audit.md)。
-- 我随后依据 resume loader 对 `uuid` 截断边界的处理、交互式 branch 命令的 UUID/`parentUuid` 重建逻辑和现有 JSONL 存储路径，实现了公开 `forkSession`；隔离测试覆盖截断、UUID 重映射、内容替换、标题写入和未知边界拒绝。`query`、工具工厂、MCP server 生命周期和 V2 session 仍缺少完整运行时契约，详见[forkSession 验证记录](docs/24-fork-session-verification.md)。
+- 我随后依据 resume loader 对 `uuid` 截断边界的处理、交互式 branch 命令的 UUID/`parentUuid` 重建逻辑和现有 JSONL 存储路径，实现了公开 `forkSession`；隔离测试覆盖截断、UUID 重映射、内容替换、标题写入和未知边界拒绝。`query`、`createSdkMcpServer()` 的 MCP server 生命周期和 V2 session 仍缺少完整运行时契约，详见[forkSession 验证记录](docs/24-fork-session-verification.md)和[工具定义验证记录](docs/25-sdk-tool-definition-verification.md)。
 
 架构分析文档中的项目称呼和快照版本信息采用通用表述；为保证技术分析可核验，API、协议和环境变量等实现标识按现有源码保留。
 
