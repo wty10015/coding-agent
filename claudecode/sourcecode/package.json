@@ -15,6 +15,7 @@
     "test:sdk-tool": "bun test scripts/sdk-tool-definition.test.mjs",
     "test:sdk-mcp": "bun test scripts/sdk-mcp-server-definition.test.mjs",
     "test:sdk-scheduled": "bun test scripts/sdk-scheduled-tasks.test.mjs",
+    "test:sdk-query-contract": "bun test scripts/sdk-query-contract.test.mjs",
     "test:build-boundaries": "bun test scripts/optional-imports.test.mjs scripts/dialog-launchers.test.mjs scripts/audit-source-build.test.mjs"
   },
   "dependencies": {
