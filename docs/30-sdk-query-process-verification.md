@@ -15,9 +15,9 @@
 
 ## 验证结果
 
-`bun test scripts/sdk-query-contract.test.mjs scripts/sdk-query-process.test.mjs` 通过 2 项测试、7 次断言。进程夹具使用本地 HTTP 模型服务，启动构建后的 CLI，驱动两轮 `Edit` 调用，确认 SDK 流收到 assistant/result 事件，并确认临时文件内容为 `SDK_QUERY_OK`。
+`bun test scripts/sdk-query-contract.test.mjs scripts/sdk-query-process.test.mjs` 通过 3 项测试、8 次断言。进程夹具使用本地 HTTP 模型服务，启动构建后的 CLI，驱动两轮 `Edit` 调用，确认 SDK 流收到 assistant/result 事件，并确认临时文件内容为 `SDK_QUERY_OK`；另一个夹具确认 abort 会结束子进程和消息流。
 
-完整 `bun run verify` 通过：CLI 构建成功，66 项测试、378 次断言通过，包解析审计返回 `success: true` 且诊断为空。
+完整 `bun run verify` 通过：CLI 构建成功，67 项测试、379 次断言通过，包解析审计返回 `success: true` 且诊断为空。
 
 ## 边界
 

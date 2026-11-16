@@ -10,7 +10,7 @@
 
 - GitHub `main` 的最新提交可通过 `git ls-remote` 核对；提交信息不包含日期。
 - Windows Bun 1.4.4 冻结安装完成，安装器报告 519 个包。一个可选 postinstall 被阻止，但没有参与当前构建、测试或包解析审计。
-- `bun run verify` 已在干净发布快照中通过：CLI 构建成功，66 项测试、378 次断言通过，`audit-source-build.mjs --include-packages` 返回 `success: true` 且诊断为空。
+- `bun run verify` 已在干净发布快照中通过：CLI 构建成功，67 项测试、379 次断言通过，`audit-source-build.mjs --include-packages` 返回 `success: true` 且诊断为空。
 - 核心夹具实际驱动 CLI 执行 `Edit` 工具，覆盖 JSON 输出、NDJSON 流输出和 NDJSON 输入配合流输出，并检查临时文件内容。
 - README、构建审计和 SDK 证据文档均已扫描，未出现指定上游项目名称或具体版本号。
 

@@ -44,7 +44,7 @@
 - 我根据已有 `McpSdkServerConfig` 结构和已恢复的 `tool()` 定义层，实现了 `createSdkMcpServer()` 的配置容器：复制工具数组，保留名称和可选版本，并在未提供工具时返回空列表。现有控制协议只证明 CLI 接收 server 名称后转发 MCP 消息，尚不能证明 server 实例注册和清理生命周期；因此这项增量没有宣称 MCP server 已接通，详见[SDK MCP 配置验证记录](docs/27-sdk-mcp-server-definition-verification.md)。
 - 我为公开 SDK 查询入口补充了隔离回归测试：进程适配的 `query()` 通过本地模型夹具完成 Edit 闭环，V2 session 创建/恢复和 one-shot prompt 仍明确拒绝，不会返回伪造会话。测试锁定了当前边界，并把仍缺失的 SDK MCP 注册和 V2 session 证据记录在[SDK 查询契约验证记录](docs/28-sdk-query-contract-verification.md)和[SDK 查询进程验证记录](docs/30-sdk-query-process-verification.md)中。
 - 我依据现有 CLI 的启动参数和 `StructuredIO` 控制协议实现了最小进程适配层：支持字符串/异步消息输入、NDJSON SDK 事件、`canUseTool` 权限回调、abort、模型/权限控制请求和非零退出报告；隔离夹具验证构建后的 CLI 能完成两轮 Edit coding 回合。这个适配层不宣称 SDK MCP 实例注册、V2 session 或完整第三方选项兼容。
-- 我又从 GitHub `main` 建立了当前发布内容的全新 Windows 浅克隆；克隆 `HEAD`、实时远端 `main` 均为 `54b5b9fa4af9b4bfa1f38229d1b0d2b6868d21ac`，冻结安装成功，519 个包、66 项测试、375 次断言和包解析审计全部通过，构建后的 CLI 版本与帮助检查也通过。详细命令和边界见[当前 GitHub 全新克隆验收](docs/29-github-clean-clone-current.md)。
+- 我又从 GitHub `main` 建立了当前发布内容的全新 Windows 浅克隆；克隆 `HEAD`、实时远端 `main` 均为 `3271eed200679d22ad1a4ee55ce860ccf519ea20`，冻结安装成功，519 个包、67 项测试、379 次断言和包解析审计全部通过，构建后的 CLI 版本与帮助检查也通过。详细命令和边界见[当前 GitHub 全新克隆验收](docs/29-github-clean-clone-current.md)。
 
 架构分析文档中的项目称呼和快照版本信息采用通用表述；为保证技术分析可核验，API、协议和环境变量等实现标识按现有源码保留。
 
