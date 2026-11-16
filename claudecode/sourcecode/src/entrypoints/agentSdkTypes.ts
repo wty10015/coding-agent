@@ -70,6 +70,11 @@ import type {
 } from './sdk/runtimeTypes.js'
 import { z } from 'zod/v4'
 import { zodToJsonSchema } from '../utils/zodToJsonSchema.js'
+import { randomUUID } from 'node:crypto'
+import {
+  buildMissedTaskNotification as buildMissedTaskNotificationImpl,
+  createCronScheduler,
+} from '../utils/cronScheduler.js'
 
 export type {
   ListSessionsOptions,
@@ -372,7 +377,61 @@ export function watchScheduledTasks(_opts: {
   signal: AbortSignal
   getJitterConfig?: () => CronJitterConfig
 }): ScheduledTasksHandle {
-  throw new Error('not implemented')
+  const { dir, signal, getJitterConfig } = _opts
+  type Event = ScheduledTaskEvent
+  const pending: Event[] = []
+  let wake: (() => void) | undefined
+  let stopped = false
+
+  const enqueue = (event: Event): void => {
+    if (stopped) return
+    pending.push(event)
+    wake?.()
+    wake = undefined
+  }
+
+  const scheduler = createCronScheduler({
+    dir,
+    lockIdentity: randomUUID(),
+    getJitterConfig,
+    isLoading: () => false,
+    onFire: () => {},
+    onFireTask: task => enqueue({ type: 'fire', task }),
+    onMissed: tasks => enqueue({ type: 'missed', tasks }),
+  })
+
+  const stop = (): void => {
+    if (stopped) return
+    stopped = true
+    scheduler.stop()
+    signal.removeEventListener('abort', stop)
+    wake?.()
+    wake = undefined
+  }
+
+  signal.addEventListener('abort', stop, { once: true })
+  if (signal.aborted) stop()
+  else scheduler.start()
+
+  return {
+    async *events(): AsyncGenerator<ScheduledTaskEvent> {
+      try {
+        while (pending.length > 0 || !stopped) {
+          if (pending.length > 0) {
+            yield pending.shift()!
+            continue
+          }
+          await new Promise<void>(resolve => {
+            wake = resolve
+          })
+        }
+        while (pending.length > 0) yield pending.shift()!
+      } finally {
+        stop()
+      }
+    },
+    getNextFireTime: () => scheduler.getNextFireTime(),
+  }
 }
 
 /**
@@ -381,7 +440,7 @@ export function watchScheduledTasks(_opts: {
  * @internal
  */
 export function buildMissedTaskNotification(_missed: CronTask[]): string {
-  throw new Error('not implemented')
+  return buildMissedTaskNotificationImpl(_missed)
 }
 
 /**

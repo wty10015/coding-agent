@@ -18,7 +18,7 @@
 
 - 完整源码 TypeScript 类型检查仍缺少完整依赖、Bun 全局声明和若干源码模块，当前没有通过证据。
 - 真实模型服务、凭证配置和网络联通不在本地夹具验证范围内。
-- 公开 SDK 的 `query()`、`createSdkMcpServer()` 和 V2 session 仍是显式桩；`tool()` 已恢复为可验证的纯定义构造器，但还没有接入 MCP server 生命周期。现有 `QueryEngine` 与 headless CLI 调用链不足以证明这些公开契约。`forkSession()` 已依据 resume loader 和 branch 命令的源码证据接入 JSONL 实现，并有隔离测试覆盖。
+- 公开 SDK 的 `query()`、`createSdkMcpServer()` 和 V2 session 仍是显式桩；`tool()` 已恢复为可验证的纯定义构造器，`watchScheduledTasks()` 已复用现有 scheduler 提供可取消的事件观察层，但这些入口还没有补齐 MCP server 生命周期或模型进程启动。现有 `QueryEngine` 与 headless CLI 调用链不足以证明这些公开契约。`forkSession()` 已依据 resume loader 和 branch 命令的源码证据接入 JSONL 实现，并有隔离测试覆盖。
 - `forkSession` 的 `upToMessageId` 已按 resume loader 的实际行为匹配 transcript `uuid`，不是依据 API `message.id` 猜测。
 
 ## 第七天复核命令

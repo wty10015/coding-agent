@@ -40,6 +40,7 @@
 - 由于没有其他完整源码材料，我会继续依据仓库现存的 schema、调用点和测试重建可证实的部分，并明确记录推断边界；已通过的 CLI 构建与本地夹具测试不等于恢复了原始完整源码。
 - 我又对随附编译材料、source map、工具声明和现有分支命令做了源码级契约审计；这些材料仍不能证明公开 SDK 的 `query`、工具工厂、MCP server 生命周期、V2 session 或 `forkSession` 语义，因此我没有凭空补写入口，继续把该范围列为未完成，详见[SDK 公共入口契约证据审计](docs/23-sdk-contract-source-audit.md)。
 - 我随后依据 resume loader 对 `uuid` 截断边界的处理、交互式 branch 命令的 UUID/`parentUuid` 重建逻辑和现有 JSONL 存储路径，实现了公开 `forkSession`；隔离测试覆盖截断、UUID 重映射、内容替换、标题写入和未知边界拒绝。`query`、`createSdkMcpServer()` 的 MCP server 生命周期和 V2 session 仍缺少完整运行时契约，详见[forkSession 验证记录](docs/24-fork-session-verification.md)和[工具定义验证记录](docs/25-sdk-tool-definition-verification.md)。
+- 我又复用了现有 `cronScheduler` 的锁、文件监听、错过任务处理和下一次触发时间计算，实现了公开 `watchScheduledTasks()` 包装器；入口只负责把 scheduler 回调转成可取消的异步事件流，并在 abort 时释放监听和锁。隔离测试覆盖 missed 事件、任务删除、下一次触发时间和通知文本；这项增量不等于公开 `query()` 或真实模型调用已经完成，详见[scheduled tasks 验证记录](docs/26-sdk-scheduled-tasks-verification.md)。
 
 架构分析文档中的项目称呼和快照版本信息采用通用表述；为保证技术分析可核验，API、协议和环境变量等实现标识按现有源码保留。
 
