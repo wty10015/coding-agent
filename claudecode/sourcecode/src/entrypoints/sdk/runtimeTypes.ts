@@ -1,4 +1,5 @@
 import type { SerializedMessage } from '../../types/logs.js'
+import type { SDKMessage, SDKUserMessage } from './coreTypes.generated.js'
 import type {
   CallToolResult,
   ToolAnnotations,
@@ -79,4 +80,92 @@ export type ForkSessionOptions = {
 
 export type ForkSessionResult = {
   sessionId: string
+}
+
+/** Permission modes accepted by the CLI control protocol. */
+export type PermissionMode =
+  | 'default'
+  | 'acceptEdits'
+  | 'bypassPermissions'
+  | 'plan'
+  | 'dontAsk'
+  | 'auto'
+
+/** Result returned by an SDK host when the CLI asks to use a tool. */
+export type PermissionResult =
+  | {
+      behavior: 'allow'
+      updatedInput?: Record<string, unknown>
+      updatedPermissions?: unknown[]
+      toolUseID?: string
+    }
+  | {
+      behavior: 'deny'
+      message: string
+      interrupt?: boolean
+      toolUseID?: string
+    }
+
+/** Minimal permission callback supported by the process-backed query adapter. */
+export type CanUseTool = (
+  toolName: string,
+  input: Record<string, unknown>,
+  options: {
+    signal: AbortSignal
+    toolUseID: string
+    requestId: string
+    blockedPath?: string
+    decisionReason?: string
+    mcpServer?: { name: string; source: string }
+  },
+) => Promise<PermissionResult | null>
+
+/**
+ * Options mapped to the existing `--print` stream protocol.
+ *
+ * The adapter intentionally keeps this surface small: every option here is
+ * backed by an existing CLI flag or environment boundary in the repository.
+ */
+export type Options = {
+  abortController?: AbortController
+  allowedTools?: string[]
+  disallowedTools?: string[]
+  canUseTool?: CanUseTool
+  continue?: boolean
+  cwd?: string
+  env?: Record<string, string | undefined>
+  fallbackModel?: string
+  forkSession?: boolean
+  maxTurns?: number
+  model?: string
+  permissionMode?: PermissionMode
+  resume?: string
+  systemPrompt?: string
+  appendSystemPrompt?: string
+  additionalDirectories?: string[]
+  includePartialMessages?: boolean
+  cliPath?: string
+  extraArgs?: Record<string, string | null>
+}
+
+/** Internal overloads currently share the public process-backed contract. */
+export type InternalOptions = Options
+
+/** Query control methods supported by the existing CLI control protocol. */
+export interface Query extends AsyncGenerator<SDKMessage, void> {
+  interrupt(): Promise<void>
+  setPermissionMode(mode: PermissionMode): Promise<void>
+  setModel(model?: string): Promise<void>
+  setMaxThinkingTokens(maxThinkingTokens: number | null): Promise<void>
+}
+
+export type InternalQuery = Query
+
+/** Placeholder V2 session types remain explicit until a session lifecycle is evidenced. */
+export type SDKSessionOptions = Options
+
+export interface SDKSession {
+  readonly sessionId: string
+  close(): Promise<void>
+  send(message: string | SDKUserMessage): Promise<void>
 }

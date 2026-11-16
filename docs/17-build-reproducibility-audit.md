@@ -1,5 +1,7 @@
 # 源码构建可复现性审计
 
+> 说明：本文保留按阶段记录的历史证据，早期条目中的“尚未实现”描述对应当时的提交状态。当前 SDK `query()` 进程适配和最新验证结果以文末“后续更新”及[SDK 查询进程验证记录](30-sdk-query-process-verification.md)为准。
+
 ## 结论
 
 我已建立源码级依赖清单与新锁文件，并在 Windows 全新 Git 浅克隆中以 Bun 1.4.4 完成冻结安装、CLI 打包、启动帮助和本地模型夹具的 Edit 工具闭环。克隆目录的 HEAD 与 GitHub `main` 发布 SHA 一致，安装了 519 个包，56 项测试、343 次断言和包解析审计通过。这证明当前外部分发 CLI 的构建和一条受控 coding 路径可复现；它不是原始依赖锁的恢复，也不证明完整源码类型检查、真实模型服务或独立 Agent SDK 运行时已通过。下文保留各阶段发现的缺口及修复证据；阶段性失败不代表现在仍在相同位置。
@@ -171,4 +173,8 @@ bun .\scripts\audit-source-build.mjs --include-packages
 
 我已将 CLI 启动检查纳入 `scripts/core-cli-smoke.test.mjs`：测试构建后的 `--version` 与 `--help`，以源码 manifest 校验版本输出，并检查退出码、帮助文本及空错误输出。`bun run verify` 会自动运行这项检查；它补足此前只在本机手动确认启动信息的差异，不改变完整源码类型检查、真实模型服务和独立 Agent SDK 尚未通过的状态。
 
-我随后从远端 `main` 发布快照建立了全新 Windows 验收目录，没有叠加本地工作区改动。`bun install --frozen-lockfile` 成功核对 519 个包；随后 `bun run verify` 完成源码打包、56 项测试和 343 次断言，包解析审计返回 `success: true` 且诊断为空。Bun 报告一个可选 postinstall 被阻止，但本次构建、测试和审计均未依赖它。该证据证明当前发布快照可按文档安装、构建并通过受控核心 coding 验收；真实模型服务、完整 TypeScript 类型检查及未实现 SDK 接口仍不在通过范围内。
+我随后从远端 `main` 发布快照建立了全新 Windows 验收目录，没有叠加本地工作区改动。`bun install --frozen-lockfile` 成功核对 519 个包；随后 `bun run verify` 完成源码打包、56 项测试和 343 次断言，包解析审计返回 `success: true` 且诊断为空。Bun 报告一个可选 postinstall 被阻止，但本次构建、测试和审计均未依赖它。该证据证明当时发布快照可按文档安装、构建并通过受控核心 coding 验收；真实模型服务、完整 TypeScript 类型检查及当时尚未接入的 SDK 接口不在该阶段通过范围内。
+
+## 后续更新
+
+在本审计形成后，我依据现有 CLI 参数和 `StructuredIO` 控制协议接入了 `query()` 的最小进程适配，并新增本地模型夹具。当前 `bun run verify` 已通过 66 项测试、378 次断言；具体实现边界与验证命令见[SDK 查询进程验证记录](30-sdk-query-process-verification.md)。

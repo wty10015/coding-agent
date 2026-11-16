@@ -25,4 +25,4 @@
 
 ## 边界
 
-本记录只证明 `forkSession` 的 transcript 文件操作。公开 `query()`、`tool()`、`createSdkMcpServer()`、V2 session 及真实模型服务仍未完成或未验证，不能用本记录替代这些范围。
+本记录只证明 `forkSession` 的 transcript 文件操作。公开 `query()` 的进程适配另见[SDK 查询进程验证记录](30-sdk-query-process-verification.md)；`tool()`、`createSdkMcpServer()` 的完整 MCP 生命周期、V2 session 及真实模型服务不能用本记录替代。

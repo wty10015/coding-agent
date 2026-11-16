@@ -21,6 +21,7 @@ import {
   tagSessionImpl,
 } from '../utils/sessionMutationImpl.js'
 import { forkSessionImpl } from '../utils/forkSessionImpl.js'
+import { queryWithProcess } from './sdk/queryRuntime.js'
 
 // Control protocol types for SDK builders (bridge subpath consumers)
 /** @alpha */
@@ -151,8 +152,11 @@ export function query(_params: {
   prompt: string | AsyncIterable<SDKUserMessage>
   options?: Options
 }): Query
-export function query(): Query {
-  throw new Error('query is not implemented in the SDK')
+export function query(params: {
+  prompt: string | AsyncIterable<SDKUserMessage>
+  options?: Options
+}): Query {
+  return queryWithProcess(params)
 }
 
 /**
