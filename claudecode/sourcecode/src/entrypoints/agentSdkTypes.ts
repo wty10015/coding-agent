@@ -20,6 +20,7 @@ import {
   renameSessionImpl,
   tagSessionImpl,
 } from '../utils/sessionMutationImpl.js'
+import { forkSessionImpl } from '../utils/forkSessionImpl.js'
 
 // Control protocol types for SDK builders (bridge subpath consumers)
 /** @alpha */
@@ -275,10 +276,10 @@ export async function tagSession(
  * @returns `{ sessionId }` — UUID of the new forked session
  */
 export async function forkSession(
-  _sessionId: string,
-  _options?: ForkSessionOptions,
+  sessionId: string,
+  options?: ForkSessionOptions,
 ): Promise<ForkSessionResult> {
-  throw new Error('forkSession is not implemented in the SDK')
+  return forkSessionImpl(sessionId, options)
 }
 
 // ============================================================================

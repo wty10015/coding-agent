@@ -2,11 +2,11 @@
 
 ## 本轮结论
 
-我沿着源码中的 SDK 入口、MCP 配置、控制消息和传输实现重新核对了自定义工具运行时。当前材料能够证明 CLI 侧已经具备 SDK MCP 客户端的连接与工具发现路径，但不足以证明 SDK 侧的 `tool()` 工厂、`createSdkMcpServer()` 实例生命周期和完整 `query()` 主循环。它们仍保持显式未实现状态，我没有用占位实现掩盖缺失的运行时契约。
+我沿着源码中的 SDK 入口、MCP 配置、控制消息和传输实现重新核对了自定义工具运行时。当前材料能够证明 CLI 侧已经具备 SDK MCP 客户端的连接与工具发现路径，也足以支持基于现有 transcript 逻辑实现 `forkSession`；但仍不足以证明 SDK 侧的 `tool()` 工厂、`createSdkMcpServer()` 实例生命周期和完整 `query()` 主循环。缺失入口仍保持显式未实现状态，我没有用占位实现掩盖缺失的运行时契约。
 
 ## 已确认的源码证据
 
-- `sourcecode/src/entrypoints/agentSdkTypes.ts` 暴露了 `tool()` 与 `createSdkMcpServer()` 的公开签名，但函数体仍抛出 `not implemented`。同一文件中的 `query()`、V2 session API 和 `forkSession()` 也仍是桩。
+- `sourcecode/src/entrypoints/agentSdkTypes.ts` 暴露了 `tool()` 与 `createSdkMcpServer()` 的公开签名，但函数体仍抛出 `not implemented`。同一文件中的 `query()` 和 V2 session API 仍是桩；`forkSession()` 已接到独立 JSONL 实现并有隔离测试。
 - `sourcecode/src/entrypoints/sdk/runtimeTypes.ts` 目前只恢复了 effort、会话列表、会话读取和会话变更所需的类型。`McpSdkServerConfigWithInstance`、`SdkMcpToolDefinition`、`AnyZodRawShape`、`InferShape`、`Query` 和 `Options` 等入口依赖的运行时类型正文不在现有源码中。
 - `sourcecode/src/services/mcp/types.ts` 的 `McpSdkServerConfigSchema` 只证明了 `{ type: 'sdk', name: string }` 这一个可序列化配置；它没有证明实例、工具 handler 或关闭方法应如何挂载。
 - `sourcecode/src/services/mcp/client.ts` 的 `setupSdkMcpClients()` 会为每个 SDK 配置创建 `SdkControlClientTransport`，连接 MCP client，再读取 server capabilities 和 tools。该函数通过 `StructuredIO.sendMcpMessage()` 把 JSON-RPC 消息交给控制通道。
@@ -22,7 +22,7 @@
 - `sourcecode/src/cli/print.ts` 的 `runHeadless()` 先创建 `StructuredIO`、载入初始消息和工具/MCP 连接，再把输入交给 `runHeadlessStreaming()`；后者逐轮调用 `ask()`，将控制请求、SDK 事件和结果按顺序写回 `StructuredIO`。
 - `sourcecode/src/cli/structuredIO.ts` 负责 NDJSON 输入拆分、控制请求 pending 表、权限响应匹配、重复 tool-use 防护和输入关闭时拒绝未完成请求。它提供了协议层的传输能力，但没有把公开 SDK `query()` 的进程启动、server 注册和清理生命周期暴露出来。
 
-这条链路证明现有 CLI 可以复用会话引擎完成受控 coding 回合；它不等价于公开 SDK `query()` 已实现，因为入口仍未把 `Options` 转换为 `QueryEngineConfig`，也未建立 SDK MCP server 与 `StructuredIO` 的桥接。
+这条链路证明现有 CLI 可以复用会话引擎完成受控 coding 回合；它不等价于公开 SDK `query()` 已实现，因为入口仍未把 `Options` 转换为 `QueryEngineConfig`，也未建立 SDK MCP server 与 `StructuredIO` 的桥接。`forkSession()` 的 transcript 分支逻辑另有独立验证，不依赖这条进程生命周期。
 
 ## 仍缺失的契约
 

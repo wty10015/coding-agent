@@ -23,7 +23,7 @@
 - 我继续修复了文件持久化入口、终端监视组件、工具选择器和压缩进度组件的导入边界，补齐源码已注明的外部构建定义，并校正相关内嵌源码映射。我还修正诊断脚本把缺失的 `src/*` 项目路径当作外部包保留的盲点。二十八项导入/映射测试、十二项入口检查和四项诊断脚本测试全部通过，Windows 隔离克隆结果一致；外部分发配置下的本地运行时模块解析现已通过。开启依赖包解析后，当时残留依赖报告 18 条错误，完整安装、构建和核心 coding 流程尚未通过。
 - 我核对随附源码映射与现存依赖快照，逐文件恢复了浏览器集成模块的八个源码文件，并将四个已有本地实现接入源码路径别名。导入诊断现在会遍历这些别名；45 项回归测试和外部构建配置下的本地模块解析通过。在当时不完整的依赖快照中，包解析仍有 17 条错误；这一阶段尚未完成源码级依赖清单、安装、完整构建和核心 coding 流程。
 - 我依据 `RemoteIO` 的调用及 WebSocket/SSE 两种传输类的实际方法，恢复了共享 `Transport` 类型契约，覆盖连接、消息写入、关闭、数据与关闭回调；专属回调仍由各自实现负责。该恢复不增加运行时代码，完整源码类型检查仍有其他缺失模块和 Bun 类型缺口。
-- 我将公开 SDK 的 `listSessions`、`getSessionInfo`、`getSessionMessages`、`renameSession` 和 `tagSession` 接到现存会话存储实现。消息读取复用 transcript loader、parent 链恢复和字段清理逻辑；会话变更复用 CLI 已有的 `custom-title` 与 `tag` JSONL 记录格式，`tagSession(..., null)` 使用现有空 tag 记录清除标签。隔离夹具覆盖分支选择、消息顺序、分页、元数据写入、清除标签及无效输入。独立 SDK 的 `query`、自定义工具运行时、会话创建和 fork 仍未实现，因此这不代表独立 Agent SDK 的核心 coding 流程已可运行。
+- 我将公开 SDK 的 `listSessions`、`getSessionInfo`、`getSessionMessages`、`renameSession` 和 `tagSession` 接到现存会话存储实现。消息读取复用 transcript loader、parent 链恢复和字段清理逻辑；会话变更复用 CLI 已有的 `custom-title` 与 `tag` JSONL 记录格式，`tagSession(..., null)` 使用现有空 tag 记录清除标签。隔离夹具覆盖分支选择、消息顺序、分页、元数据写入、清除标签及无效输入。这个阶段的独立 SDK `query`、自定义工具运行时、会话创建和 fork 均未实现；后续已单独接入并验证 `forkSession`，其余范围仍不代表独立 Agent SDK 的核心 coding 流程已可运行。
 - 我把已验证的 CLI `--version` 与 `--help` 启动检查加入源码验证套件；测试从项目 manifest 读取预期版本，并检查命令退出码、输出和错误输出。该项随 `bun run verify` 自动执行，与现有本地模型夹具的 Edit 闭环共同覆盖源码构建后的 CLI 启动和核心工具路径。
 - 我从远端 `main` 的发布快照建立了全新 Windows 验收目录，执行 `bun install --frozen-lockfile`、`bun run verify`；安装核对 519 个包，CLI 构建成功，56 项测试、343 次断言和包解析审计全部通过。安装器阻止的一个可选 postinstall 不影响本次构建、测试或审计；该快照验证的是当前可复现 CLI 与本地模型夹具路径，不等于真实模型服务或未实现 SDK 接口已经通过。
 - 我又从 GitHub `main` 做了全新的浅克隆，并在 checkout 内用 Bun 1.4.4 完成 `bun install --frozen-lockfile` 与 `bun run verify`；克隆目录的 HEAD 与远端发布 SHA 一致，519 个包安装完成，56 项测试、343 次断言和包解析审计再次通过。此次验证证明文档中的 Git 克隆路径可以复现当前 CLI 构建和本地模型夹具流程；被安装器阻止的可选 postinstall、真实模型服务和未实现 SDK 接口仍不在通过范围内。
@@ -39,6 +39,7 @@
 - 我沿 SDK 入口、MCP 配置、控制消息和传输实现核对了自定义工具运行时；现有源码只证明 CLI 侧的 SDK MCP 连接与工具发现路径，`tool()`、`createSdkMcpServer()`、`query()` 及其运行时类型仍缺少完整契约，因此我保留明确桩并记录证据边界，详见[SDK 运行时证据记录](docs/18-sdk-runtime-evidence.md)。
 - 由于没有其他完整源码材料，我会继续依据仓库现存的 schema、调用点和测试重建可证实的部分，并明确记录推断边界；已通过的 CLI 构建与本地夹具测试不等于恢复了原始完整源码。
 - 我又对随附编译材料、source map、工具声明和现有分支命令做了源码级契约审计；这些材料仍不能证明公开 SDK 的 `query`、工具工厂、MCP server 生命周期、V2 session 或 `forkSession` 语义，因此我没有凭空补写入口，继续把该范围列为未完成，详见[SDK 公共入口契约证据审计](docs/23-sdk-contract-source-audit.md)。
+- 我随后依据 resume loader 对 `uuid` 截断边界的处理、交互式 branch 命令的 UUID/`parentUuid` 重建逻辑和现有 JSONL 存储路径，实现了公开 `forkSession`；隔离测试覆盖截断、UUID 重映射、内容替换、标题写入和未知边界拒绝。`query`、工具工厂、MCP server 生命周期和 V2 session 仍缺少完整运行时契约，详见[forkSession 验证记录](docs/24-fork-session-verification.md)。
 
 架构分析文档中的项目称呼和快照版本信息采用通用表述；为保证技术分析可核验，API、协议和环境变量等实现标识按现有源码保留。
 

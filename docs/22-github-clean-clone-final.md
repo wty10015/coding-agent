@@ -2,7 +2,7 @@
 
 ## 我的验收结论
 
-我从 GitHub `main` 建立了新的 Windows 浅克隆，并把验收目录放在 D 盘以避开系统临时盘空间不足。克隆得到的 `HEAD`、克隆后实时读取的远端 `main` 和 GitHub API 返回的提交均为 `1cb38139e27bab213a48431ef3fcaae5a87c9853`。这次结果满足“从 GitHub 干净克隆按文档安装、构建并完成受控核心 coding 验收”的证据要求。
+我从 GitHub `main` 建立了新的 Windows 浅克隆，并把验收目录放在 D 盘以避开系统临时盘空间不足。该次验收的克隆 `HEAD`、克隆后实时读取的远端 `main` 和 GitHub API 返回的提交均为 `1cb38139e27bab213a48431ef3fcaae5a87c9853`；后续文档和源码增量已发布到当前 `main` 的 `2b741487a335675f1ef05f64ec05e76027b4c8cf`。这次结果满足“从 GitHub 干净克隆按文档安装、构建并完成受控核心 coding 验收”的证据要求。
 
 这项验收覆盖当前源码级 CLI 分发和本地模型夹具驱动的 Edit 流程，不扩大完整 TypeScript 类型检查、真实模型服务或尚未实现 SDK 公开入口的范围。那些缺口仍在发布审计中明确列出。
 
@@ -34,4 +34,4 @@ npm exec --yes --package=bun@1.4.4 -- bun .\dist\cli.js --help
 
 ## 仍未覆盖的范围
 
-完整源码 TypeScript 类型检查、真实模型服务和独立 SDK 的 `query()`、工具工厂、V2 session 与 fork 入口仍按[发布就绪审计](19-release-readiness-audit.md)披露；我没有用这次 CLI 验收替代这些契约的实现或验证。
+完整源码 TypeScript 类型检查、真实模型服务和独立 SDK 的 `query()`、工具工厂、MCP 生命周期与 V2 session 仍按[发布就绪审计](19-release-readiness-audit.md)披露；`forkSession` 的后续源码实现和隔离验证见[forkSession 验证记录](24-fork-session-verification.md)。我没有用这次 CLI 验收替代这些契约的实现或验证。

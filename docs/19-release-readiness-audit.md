@@ -18,8 +18,8 @@
 
 - 完整源码 TypeScript 类型检查仍缺少完整依赖、Bun 全局声明和若干源码模块，当前没有通过证据。
 - 真实模型服务、凭证配置和网络联通不在本地夹具验证范围内。
-- 公开 SDK 的 `query()`、`tool()`、`createSdkMcpServer()`、V2 session 和 `forkSession()` 仍是显式桩；现有 `QueryEngine` 与 headless CLI 调用链不足以证明这些公开契约。
-- `forkSession` 的 `upToMessageId` 尚未确认应匹配 transcript `uuid` 还是 API `message.id`，因此我没有用猜测实现替代缺失契约。
+- 公开 SDK 的 `query()`、`tool()`、`createSdkMcpServer()` 和 V2 session 仍是显式桩；现有 `QueryEngine` 与 headless CLI 调用链不足以证明这些公开契约。`forkSession()` 已依据 resume loader 和 branch 命令的源码证据接入 JSONL 实现，并有隔离测试覆盖。
+- `forkSession` 的 `upToMessageId` 已按 resume loader 的实际行为匹配 transcript `uuid`，不是依据 API `message.id` 猜测。
 
 ## 第七天复核命令
 
