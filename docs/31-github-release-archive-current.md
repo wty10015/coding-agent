@@ -19,4 +19,6 @@ npm exec --yes --package=bun@1.4.4 -- bun .\dist\cli.js --version
 npm exec --yes --package=bun@1.4.4 -- bun .\dist\cli.js --help
 ```
 
-待 Git clone endpoint 恢复后，我会用同一 SHA 补做新的 Windows 浅克隆，并单独记录 clone 的 HEAD 与远端 `main` 核对结果。
+## 后续浅克隆复核
+
+随后 Git clone endpoint 恢复。我从当前 `main` 建立新的 Windows 浅克隆，clone `HEAD` 与实时远端 `main` 均核对为 `de735686a3361ec266eff83b81363591974ddd6e`；同一目录再次完成 519 个包的冻结安装、68 项测试、383 次断言、包解析审计以及 CLI 版本/帮助检查。最终 clone 证据详见[当前 GitHub 全新克隆验收](29-github-clean-clone-current.md)。

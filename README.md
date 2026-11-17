@@ -47,6 +47,7 @@
 - 我又从 GitHub `main` 建立了当前发布内容的全新 Windows 浅克隆；克隆 `HEAD`、实时远端 `main` 均为 `3271eed200679d22ad1a4ee55ce860ccf519ea20`，冻结安装成功，519 个包、67 项测试、379 次断言和包解析审计全部通过，构建后的 CLI 版本与帮助检查也通过。详细命令和边界见[当前 GitHub 全新克隆验收](docs/29-github-clean-clone-current.md)。
 - 我在进程适配的基础上接通了可验证的 SDK MCP 工具子集：`query()` 通过 `Options.mcpServers` 注册现有 `createSdkMcpServer()` 定义，沿 `SdkControlTransport` 的控制协议处理 `initialize`、初始化通知、`tools/list` 和 `tools/call`，并在 MCP 回合结束前保持输入通道可用。隔离夹具确认 CLI 状态为 `connected`、工具实际返回结果，完整 `verify` 现为 68 项测试、383 次断言通过。V2 session、完整 SDK 选项兼容、完整源码类型检查和真实模型服务仍按审计边界披露，详见[SDK 查询进程验证记录](docs/30-sdk-query-process-verification.md)。
 - 我从 GitHub API 读取当前 `main` 的 `9a951fa4`，用该精确提交的发布归档建立了全新 Windows 验收目录；冻结安装、完整验证、CLI 版本和帮助检查均通过。由于本轮 Git clone endpoint 连接重置，这条结果明确记为发布归档验收，不替代新的 Git clone 证据，详见[当前 GitHub 发布归档验收](docs/31-github-release-archive-current.md)。
+- 我随后从 GitHub `main` 建立新的 Windows 浅克隆，clone `HEAD`、实时远端 `main` 均为 `de735686a3361ec266eff83b81363591974ddd6e`；519 个包冻结安装、68 项测试、383 次断言、包解析审计及 CLI 版本/帮助检查全部通过，详见[当前 GitHub 全新克隆验收](docs/29-github-clean-clone-current.md)。
 
 架构分析文档中的项目称呼和快照版本信息采用通用表述；为保证技术分析可核验，API、协议和环境变量等实现标识按现有源码保留。
 
