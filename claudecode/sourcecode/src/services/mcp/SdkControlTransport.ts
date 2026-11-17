@@ -79,8 +79,16 @@ export class SdkControlClientTransport implements Transport {
     // Send the message and wait for the response
     const response = await this.sendMcpMessage(this.serverName, message)
 
-    // Pass the response back to the MCP client
-    if (this.onmessage) {
+    // Notifications do not have a response to deliver to the MCP client. The
+    // control bridge still acknowledges them so the SDK host can complete its
+    // request, but forwarding the placeholder would confuse the JSON-RPC
+    // request/response matcher in Client.
+    const hasResponseId =
+      typeof message === 'object' &&
+      message !== null &&
+      'id' in message &&
+      (message as { id?: unknown }).id !== undefined
+    if (hasResponseId && this.onmessage) {
       this.onmessage(response)
     }
   }

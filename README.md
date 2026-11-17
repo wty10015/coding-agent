@@ -45,6 +45,7 @@
 - 我为公开 SDK 查询入口补充了隔离回归测试：进程适配的 `query()` 通过本地模型夹具完成 Edit 闭环，V2 session 创建/恢复和 one-shot prompt 仍明确拒绝，不会返回伪造会话。测试锁定了当前边界，并把仍缺失的 SDK MCP 注册和 V2 session 证据记录在[SDK 查询契约验证记录](docs/28-sdk-query-contract-verification.md)和[SDK 查询进程验证记录](docs/30-sdk-query-process-verification.md)中。
 - 我依据现有 CLI 的启动参数和 `StructuredIO` 控制协议实现了最小进程适配层：支持字符串/异步消息输入、NDJSON SDK 事件、`canUseTool` 权限回调、abort、模型/权限控制请求和非零退出报告；隔离夹具验证构建后的 CLI 能完成两轮 Edit coding 回合。这个适配层不宣称 SDK MCP 实例注册、V2 session 或完整第三方选项兼容。
 - 我又从 GitHub `main` 建立了当前发布内容的全新 Windows 浅克隆；克隆 `HEAD`、实时远端 `main` 均为 `3271eed200679d22ad1a4ee55ce860ccf519ea20`，冻结安装成功，519 个包、67 项测试、379 次断言和包解析审计全部通过，构建后的 CLI 版本与帮助检查也通过。详细命令和边界见[当前 GitHub 全新克隆验收](docs/29-github-clean-clone-current.md)。
+- 我在进程适配的基础上接通了可验证的 SDK MCP 工具子集：`query()` 通过 `Options.mcpServers` 注册现有 `createSdkMcpServer()` 定义，沿 `SdkControlTransport` 的控制协议处理 `initialize`、初始化通知、`tools/list` 和 `tools/call`，并在 MCP 回合结束前保持输入通道可用。隔离夹具确认 CLI 状态为 `connected`、工具实际返回结果，完整 `verify` 现为 68 项测试、383 次断言通过。V2 session、完整 SDK 选项兼容、完整源码类型检查和真实模型服务仍按审计边界披露，详见[SDK 查询进程验证记录](docs/30-sdk-query-process-verification.md)。
 
 架构分析文档中的项目称呼和快照版本信息采用通用表述；为保证技术分析可核验，API、协议和环境变量等实现标识按现有源码保留。
 
@@ -62,7 +63,7 @@ npm exec --yes --package=bun@1.4.4 -- bun .\dist\cli.js --version
 npm exec --yes --package=bun@1.4.4 -- bun .\dist\cli.js --help
 ```
 
-`verify` 依次构建 CLI、运行源码目录中的测试文件并检查包模块解析，避免核心夹具因尚未生成 `dist/cli.js` 而失败。测试覆盖构建边界、会话元数据和核心 Edit 工具流程；模型 API 由本机夹具模拟，不发送真实模型请求。构建不包含整个源码树的 TypeScript 类型检查；真实服务与独立 SDK 的查询及工具接口仍需验收。单独运行测试时，可将上方命令中的 `verify` 替换为 `test`；若只运行 `build`，CLI 生成后再单独运行测试。
+`verify` 依次构建 CLI、运行源码目录中的测试文件并检查包模块解析，避免核心夹具因尚未生成 `dist/cli.js` 而失败。测试覆盖构建边界、会话元数据、核心 Edit 工具流程和进程适配的 SDK MCP 工具回合；模型 API 由本机夹具模拟，不发送真实模型请求。构建不包含整个源码树的 TypeScript 类型检查；真实服务、V2 session 和完整 SDK 选项仍需验收。单独运行测试时，可将上方命令中的 `verify` 替换为 `test`；若只运行 `build`，CLI 生成后再单独运行测试。
 
 ## 本地凭证
 

@@ -146,6 +146,7 @@ export type Options = {
   includePartialMessages?: boolean
   cliPath?: string
   extraArgs?: Record<string, string | null>
+  mcpServers?: Record<string, McpSdkServerConfigWithInstance>
 }
 
 /** Internal overloads currently share the public process-backed contract. */

@@ -10,7 +10,7 @@
 
 - GitHub `main` 的最新提交可通过 `git ls-remote` 核对；提交信息不包含日期。
 - Windows Bun 1.4.4 冻结安装完成，安装器报告 519 个包。一个可选 postinstall 被阻止，但没有参与当前构建、测试或包解析审计。
-- `bun run verify` 已在干净发布快照中通过：CLI 构建成功，67 项测试、379 次断言通过，`audit-source-build.mjs --include-packages` 返回 `success: true` 且诊断为空。
+- `bun run verify` 已在当前发布工作树中通过：CLI 构建成功，68 项测试、383 次断言通过，`audit-source-build.mjs --include-packages` 返回 `success: true` 且诊断为空。
 - 核心夹具实际驱动 CLI 执行 `Edit` 工具，覆盖 JSON 输出、NDJSON 流输出和 NDJSON 输入配合流输出，并检查临时文件内容。
 - README、构建审计和 SDK 证据文档均已扫描，未出现指定上游项目名称或具体版本号。
 
@@ -18,7 +18,7 @@
 
 - 完整源码 TypeScript 类型检查仍缺少完整依赖、Bun 全局声明和若干源码模块，当前没有通过证据。
 - 真实模型服务、凭证配置和网络联通不在本地夹具验证范围内。
-- 公开 SDK 的 `query()` 已接入现有 CLI 的最小进程适配，并由本地模型夹具验证启动、NDJSON 事件、Edit 闭环、控制请求和退出清理；V2 session 仍是显式桩。`tool()` 已恢复为可验证的纯定义构造器，`createSdkMcpServer()` 已恢复为配置容器，`watchScheduledTasks()` 已复用现有 scheduler 提供可取消的事件观察层，但 SDK MCP server 实例注册、请求关联和完整清理生命周期仍未补齐。`forkSession()` 已依据 resume loader 和 branch 命令的源码证据接入 JSONL 实现，并有隔离测试覆盖。
+- 公开 SDK 的 `query()` 已接入现有 CLI 的最小进程适配，并由本地模型夹具验证启动、NDJSON 事件、Edit 闭环、控制请求、单个 SDK MCP server 的初始化/工具发现/调用和退出清理；V2 session 仍是显式桩。`tool()` 已恢复为可验证的纯定义构造器，`createSdkMcpServer()` 已提供进程适配可消费的配置容器，`watchScheduledTasks()` 已复用现有 scheduler 提供可取消的事件观察层；多 server 动态生命周期、完整清理契约和完整 SDK 选项仍未补齐。`forkSession()` 已依据 resume loader 和 branch 命令的源码证据接入 JSONL 实现，并有隔离测试覆盖。
 - `forkSession` 的 `upToMessageId` 已按 resume loader 的实际行为匹配 transcript `uuid`，不是依据 API `message.id` 猜测。
 
 ## 第七天复核命令
