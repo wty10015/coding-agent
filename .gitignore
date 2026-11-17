@@ -1,8 +1,8 @@
 **/node_modules/
-claudecode/sourcecode/dist/
+agent/sourcecode/dist/
 **/.DS_Store
 __MACOSX/
 **/.env
 **/.env.*
 !**/.env.example
-**/.claude/settings.local.json
+**/.codingagent/settings.local.json
